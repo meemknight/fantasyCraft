@@ -95,3 +95,35 @@ std::string Shader::loadShaderSource(std::string source)
 
 	return std::move(ret);
 }
+
+void DrawBlocksShader::load()
+{
+	loadFromFiles(RESOURCES_PATH "vertex.vert", RESOURCES_PATH "fragment.frag");
+
+	u_playerPos = glGetUniformLocation(id, "u_playerPos");
+	u_modelView = glGetUniformLocation(id, "u_modelView");
+	u_projectionMatrix = glGetUniformLocation(id, "u_projectionMatrix");
+
+	if(u_projectionMatrix == -1)
+	{
+		std::cout << "projMat error\n";
+	}
+
+}
+
+void DrawBlocksShader::setProjectionMatrix(const glm::mat4 &mat)
+{
+	glUniformMatrix4fv(u_projectionMatrix, 1, GL_FALSE, &(mat[0][0]));
+
+}
+
+void DrawBlocksShader::setModelViewMatrix(const glm::mat4 &mat)
+{
+	glUniformMatrix4fv(u_modelView, 1, GL_FALSE, &(mat[0][0]));
+
+}
+
+void DrawBlocksShader::setPlayerPos(const glm::vec3 &pos)
+{
+	glUniform3f(u_playerPos, pos.x, pos.y, pos.z);
+}

@@ -68,6 +68,30 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 			input.setKeyRelease(GameInput::RIGHT);
 		}
 	}
+	if (key == GLFW_KEY_Q)
+	{
+		if (action == GLFW_PRESS)
+		{
+			input.setKeyPress(GameInput::DOWN);
+		}
+		else
+		if (action == GLFW_RELEASE)
+		{
+			input.setKeyRelease(GameInput::DOWN);
+		}
+	}
+	if (key == GLFW_KEY_E)
+	{
+		if (action == GLFW_PRESS)
+		{
+			input.setKeyPress(GameInput::UP);
+		}
+		else
+		if (action == GLFW_RELEASE)
+		{
+			input.setKeyRelease(GameInput::UP);
+		}
+	}
 
 };
 
@@ -81,10 +105,10 @@ void mouseCallback(GLFWwindow *window, int key, int action, int mods)
 			input.setKeyPress(GameInput::LEFT_CLICK);
 		}
 		else
-			if (action == GLFW_RELEASE)
-			{
-				input.setKeyRelease(GameInput::LEFT_CLICK);
-			}
+		if (action == GLFW_RELEASE)
+		{
+			input.setKeyRelease(GameInput::LEFT_CLICK);
+		}
 
 	}
 
@@ -95,10 +119,10 @@ void mouseCallback(GLFWwindow *window, int key, int action, int mods)
 			input.setKeyPress(GameInput::RIGHT_CLICK);
 		}
 		else
-			if (action == GLFW_RELEASE)
-			{
-				input.setKeyRelease(GameInput::RIGHT_CLICK);
-			}
+		if (action == GLFW_RELEASE)
+		{
+			input.setKeyRelease(GameInput::RIGHT_CLICK);
+		}
 
 	}
 }
@@ -171,7 +195,9 @@ int main()
 		lastTime = clock();
 	#pragma endregion
 
-
+		double xMouse, yMouse;
+		glfwGetCursorPos(wind, &xMouse, &yMouse);
+		input.setMousePosition(xMouse, yMouse);
 		
 		game.updateWindowMetrics(w, h);
 		game.onUpdate(deltaTime, input);

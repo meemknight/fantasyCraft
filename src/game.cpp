@@ -1,5 +1,6 @@
-#include "..\include\game.h"
+#include "game.h"
 #include <iostream>
+#include "glm/gtc/matrix_transform.hpp"
 
 void Game::onCreate(int screenW, int screenH)
 {
@@ -29,31 +30,68 @@ void Game::onCreate(int screenW, int screenH)
 	glBindVertexArray(0);
 
 
-	shader.loadFromFiles(RESOURCES_PATH "vertex.vert", RESOURCES_PATH "fragment.frag");
+	shader.load();
 
 }
 
 void Game::onUpdate(float deltaTime, const GameInput &input)
 {
 
-
-	const float speed = 100 * deltaTime;
-
-	if(input.getKey(GameInput::RIGHT_CLICK).isHeld())
+	//input
 	{
-		posX -= speed;
-	}
+		const float speed = 2 * deltaTime;
 
-	if (input.getKey(GameInput::RIGHT).isHeld())
-	{
-		posX += speed;
-	}
-	
+		if (input.getKey(GameInput::LEFT).isHeld())
+		{
+			camera.getPosition().x -= speed;
+		}
 
-	
+		if (input.getKey(GameInput::RIGHT).isHeld())
+		{
+			camera.getPosition().x += speed;
+		}
+
+		if (input.getKey(GameInput::FRONT).isHeld())
+		{
+			camera.getPosition().z -= speed;
+		}
+
+		if (input.getKey(GameInput::BACK).isHeld())
+		{
+			camera.getPosition().z += speed;
+		}
+
+		if (input.getKey(GameInput::DOWN).isHeld())
+		{
+			camera.getPosition().y -= speed;
+		}
+
+		if (input.getKey(GameInput::UP).isHeld())
+		{
+			camera.getPosition().y += speed;
+		}
+
+		static int lastMouseX;
+		static int lastMouseY;
+		if(input.getKey(GameInput::RIGHT_CLICK).isHeld())
+		{
+			glm::vec2 delta = input.getMousePos();
+			delta -= glm::vec2(lastMouseX, lastMouseY);
+			camera.rotateCamera(delta * deltaTime);	   
+			lastMouseX = input.getMousePosX();
+			lastMouseY = input.getMousePosY();
+		}else
+		{
+			lastMouseX = input.getMousePosX();
+			lastMouseY = input.getMousePosY();
+		}
+	}
 
 	glBindVertexArray(frontFaceVAO);
 	shader.bind();
+	shader.setPlayerPos(camera.getPosition());
+	shader.setProjectionMatrix(camera.getProjectionMatrix());
+	shader.setModelViewMatrix(camera.getViewMatrix());
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -67,5 +105,8 @@ void Game::updateWindowMetrics(int screenW, int screenH)
 	this->screenH = screenH;
 
 	renderer2d.updateWindowMetrics(screenW, screenH);
+	glViewport(0, 0, screenW, screenH);
+
+	camera.updateAspectRatio(screenW, screenH);
 
 }

@@ -1,6 +1,10 @@
+#pragma once
+
 #include "gl2d/gl2d.h"
 #include <glad/glad.h>
 #include "shader.h"
+#include "camera.h"
+#include "glm/vec2.hpp"
 
 class GameInput;
 
@@ -52,6 +56,8 @@ public:
 		RIGHT,
 		LEFT_CLICK,
 		RIGHT_CLICK,
+		DOWN,
+		UP,
 		BUTTONS_COUNT
 	};
 
@@ -103,11 +109,32 @@ public:
 		}
 	}
 
+	int getMousePosX() const
+	{
+		return mousePosX;
+	}
 
+	int getMousePosY() const
+	{
+		return mousePosY;
+	}
+
+	glm::ivec2 getMousePos() const
+	{
+		return glm::ivec2(mousePosX, mousePosY);
+	}
+
+	void setMousePosition(int x, int y)
+	{
+		mousePosX = x;
+		mousePosY = y;
+	}
 
 private:
 
 	Button buttons[BUTTONS_COUNT];
+	int mousePosX;
+	int mousePosY;
 
 };
 
@@ -123,6 +150,7 @@ public:
 
 	void updateWindowMetrics(int screenW, int screenH);
 
+
 private:
 
 	//game data
@@ -131,16 +159,13 @@ private:
 	gl2d::Texture texture;
 	int screenW, screenH;
 
-	float posX = 0;
-	float posY = 0;
-
 	//front
 	float facePositions[12] = 
 	{
-		0.5, 0.5, 0,
-		-0.5, 0.5, 0,
-		-0.5, -0.5, 0,
-		0.5, -0.5, 0
+		0.5, 0.5, -0.5,
+		-0.5, 0.5, -0.5,
+		-0.5, -0.5, -0.5,
+		0.5, -0.5, -0.5
 	};
 
 	//front
@@ -150,9 +175,11 @@ private:
 		2,3,0
 	};
 
+	Camera camera;
+
 	GLuint frontFaceVAO;
 	GLuint frontFaceBuffer;
 	GLuint frontFaceIndexBuffer;
 
-	Shader shader;
+	DrawBlocksShader shader;
 };
