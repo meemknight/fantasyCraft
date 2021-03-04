@@ -11,42 +11,22 @@ void Game::onCreate(int screenW, int screenH)
 	renderer2d.create();
 
 	font.createFromFile(RESOURCES_PATH "roboto_black.ttf");
-	texture.load(RESOURCES_PATH "test.jpg");
-
-	glGenVertexArrays(1, &frontFaceVAO);
-	glBindVertexArray(frontFaceVAO);
-
-	glGenBuffers(1, &frontFaceBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, frontFaceBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(facePositions), facePositions, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
-
-	glGenBuffers(1, &frontFaceTextureIndexesBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, frontFaceTextureIndexesBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(faceTexture), faceTexture, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void *)0);
 	
-
-	glGenBuffers(1, &frontFaceIndexBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, frontFaceIndexBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(faceIndeces), faceIndeces, GL_STATIC_DRAW);
-
-	
-	glBindVertexArray(0);
-
 
 	shader.load();
+
+	camera.getPosition() = {0,0,2};
 
 }
 
 void Game::onUpdate(float deltaTime, const GameInput &input)
 {
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 
 	//input
 	{
-		const float speed = 1 * deltaTime;
+		const float speed = 2 * deltaTime;
 		glm::vec3 movePos = {};
 
 		if (input.getKey(GameInput::LEFT).isHeld())
@@ -96,16 +76,14 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 		}
 	}
 
-	glBindVertexArray(frontFaceVAO);
-	shader.bind();
-	shader.setPlayerPos(camera.getPosition());
-	shader.setProjectionMatrix(camera.getProjectionMatrix());
-	shader.setModelViewMatrix(camera.getViewMatrix());
-	texture.bind(0);
-
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-	glBindVertexArray(0);
+	renderer.render(camera, { 0,0,0 });
+	renderer.render(camera, { 1,0,0 });
+	renderer.render(camera, { 0,1,0 });
+	renderer.render(camera, {1,1,0});
+	renderer.render(camera, { 0,0,1 });
+	renderer.render(camera, { 1,0,1 });
+	renderer.render(camera, { 0,1,1 });
+	renderer.render(camera, { 1,1,1 });
 
 }
 

@@ -6,6 +6,7 @@
 #include "camera.h"
 #include "glm/vec2.hpp"
 #include <texture.h>
+#include "renderer.h"
 
 class GameInput;
 
@@ -193,4 +194,6 @@ private:
 
 	DrawBlocksShader shader;
 	Texture texture;
+
+	ChunksRenderer renderer;
 };

@@ -40,6 +40,7 @@ public:
 	void setModelViewMatrix(const glm::mat4 &mat);
 	void setPlayerPos(const glm::vec3 &pos);
 	void setTexture(int index);
+	void setPosition(int x, int y, int z);
 
 private:
 
@@ -47,4 +48,6 @@ private:
 	GLint u_modelView;
 	GLint u_projectionMatrix;
 	GLint u_texture;
+	GLint u_pos;
+
 };

@@ -181,12 +181,13 @@ int main()
 
 	long lastTime = clock();
 
+
 	while (!glfwWindowShouldClose(wind))
 	{
 		int w = 0; int h = 0;
 		glfwGetWindowSize(wind, &w, &h);
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
 	#pragma region movement
