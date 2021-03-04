@@ -27,6 +27,10 @@ void Game::onCreate(int screenW, int screenH)
 
 	
 	glBindVertexArray(0);
+
+
+	shader.loadFromFiles(RESOURCES_PATH "vertex.vert", RESOURCES_PATH "fragment.frag");
+
 }
 
 void Game::onUpdate(float deltaTime, const GameInput &input)
@@ -49,7 +53,7 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 	
 
 	glBindVertexArray(frontFaceVAO);
-	glUseProgram(0);
+	shader.bind();
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

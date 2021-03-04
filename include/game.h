@@ -1,5 +1,6 @@
 #include "gl2d/gl2d.h"
 #include <glad/glad.h>
+#include "shader.h"
 
 class GameInput;
 
@@ -153,5 +154,5 @@ private:
 	GLuint frontFaceBuffer;
 	GLuint frontFaceIndexBuffer;
 
-
+	Shader shader;
 };
