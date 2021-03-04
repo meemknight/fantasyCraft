@@ -103,6 +103,7 @@ void DrawBlocksShader::load()
 	u_playerPos = glGetUniformLocation(id, "u_playerPos");
 	u_modelView = glGetUniformLocation(id, "u_modelView");
 	u_projectionMatrix = glGetUniformLocation(id, "u_projectionMatrix");
+	u_texture = glGetUniformLocation(id, "u_texture");
 
 	if(u_projectionMatrix == -1)
 	{
@@ -126,4 +127,9 @@ void DrawBlocksShader::setModelViewMatrix(const glm::mat4 &mat)
 void DrawBlocksShader::setPlayerPos(const glm::vec3 &pos)
 {
 	glUniform3f(u_playerPos, pos.x, pos.y, pos.z);
+}
+
+void DrawBlocksShader::setTexture(int index)
+{
+	glUniform1i(u_texture, index);
 }

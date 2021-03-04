@@ -11,7 +11,7 @@ void Game::onCreate(int screenW, int screenH)
 	renderer2d.create();
 
 	font.createFromFile(RESOURCES_PATH "roboto_black.ttf");
-	texture.loadFromFile(RESOURCES_PATH "test.jpg");
+	texture.load(RESOURCES_PATH "test.jpg");
 
 	glGenVertexArrays(1, &frontFaceVAO);
 	glBindVertexArray(frontFaceVAO);
@@ -21,6 +21,13 @@ void Game::onCreate(int screenW, int screenH)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(facePositions), facePositions, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+
+	glGenBuffers(1, &frontFaceTextureIndexesBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, frontFaceTextureIndexesBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(faceTexture), faceTexture, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void *)0);
+	
 
 	glGenBuffers(1, &frontFaceIndexBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, frontFaceIndexBuffer);
@@ -94,6 +101,7 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 	shader.setPlayerPos(camera.getPosition());
 	shader.setProjectionMatrix(camera.getProjectionMatrix());
 	shader.setModelViewMatrix(camera.getViewMatrix());
+	texture.bind(0);
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

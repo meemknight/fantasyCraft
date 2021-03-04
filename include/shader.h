@@ -39,11 +39,12 @@ public:
 	void setProjectionMatrix(const glm::mat4 &mat);
 	void setModelViewMatrix(const glm::mat4 &mat);
 	void setPlayerPos(const glm::vec3 &pos);
+	void setTexture(int index);
 
 private:
 
 	GLint u_playerPos;
 	GLint u_modelView;
 	GLint u_projectionMatrix;
-
+	GLint u_texture;
 };

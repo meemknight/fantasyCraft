@@ -5,6 +5,7 @@
 #include "shader.h"
 #include "camera.h"
 #include "glm/vec2.hpp"
+#include <texture.h>
 
 class GameInput;
 
@@ -156,7 +157,6 @@ private:
 	//game data
 	gl2d::Renderer2D renderer2d;
 	gl2d::Font font;
-	gl2d::Texture texture;
 	int screenW, screenH;
 
 	//front
@@ -166,6 +166,15 @@ private:
 		-0.5, 0.5, -0.5,
 		-0.5, -0.5, -0.5,
 		0.5, -0.5, -0.5
+	};
+
+	//front
+	float faceTexture[8] =
+	{
+		1,1,
+		0,1,
+		0,0,
+		1,0
 	};
 
 	//front
@@ -179,7 +188,9 @@ private:
 
 	GLuint frontFaceVAO;
 	GLuint frontFaceBuffer;
+	GLuint frontFaceTextureIndexesBuffer;
 	GLuint frontFaceIndexBuffer;
 
 	DrawBlocksShader shader;
+	Texture texture;
 };
