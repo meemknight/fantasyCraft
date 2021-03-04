@@ -24,7 +24,9 @@ public:
 		aspectRatio = w / h;
 	}
 
-private:
+	virtual void move(glm::vec3 direction) { position += direction; }
+
+protected:
 
 	glm::vec3 position = {};
 	glm::vec3 upVector = { 0,1,0 };
@@ -34,5 +36,15 @@ private:
 	float closePlane = 0.1;
 	float farPlane = 100;
 	float aspectRatio = 1.f;
+
+};
+
+class FirstPersonFlyCamera: public Camera
+{
+public:
+
+	void move(glm::vec3 direction);
+
+
 
 };

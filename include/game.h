@@ -175,7 +175,7 @@ private:
 		2,3,0
 	};
 
-	Camera camera;
+	FirstPersonFlyCamera camera;
 
 	GLuint frontFaceVAO;
 	GLuint frontFaceBuffer;

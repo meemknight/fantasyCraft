@@ -27,7 +27,7 @@ void Camera::rotateCamera(float x, float y)
 	x *= -1;
 	y *= -1;
 
-	float speed = 2;
+	float speed = 10;
 
 	glm::vec3 vectorToTheRight = glm::cross(viewDirection, upVector);
 
@@ -52,4 +52,25 @@ void Camera::rotateCamera(float x, float y)
 	}
 
 	viewDirection = glm::normalize(viewDirection);
+}
+
+void FirstPersonFlyCamera::move(glm::vec3 direction)
+{
+
+	glm::vec3 m = {};
+	m.y = direction.y;
+
+	glm::vec3 moveFront = direction;
+
+	if (direction.x || direction.z)
+	{
+		glm::vec3 v = viewDirection;
+		v.y = 0;
+		m -= glm::normalize(v) * direction.z;
+		m += glm::normalize(glm::cross(v, glm::vec3{ 0,1,0 })) * direction.x;
+	}
+
+
+	position += m;
+
 }

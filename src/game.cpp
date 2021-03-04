@@ -39,37 +39,39 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 
 	//input
 	{
-		const float speed = 2 * deltaTime;
+		const float speed = 1 * deltaTime;
+		glm::vec3 movePos = {};
 
 		if (input.getKey(GameInput::LEFT).isHeld())
 		{
-			camera.getPosition().x -= speed;
+			movePos.x -= speed;
 		}
 
 		if (input.getKey(GameInput::RIGHT).isHeld())
 		{
-			camera.getPosition().x += speed;
+			movePos.x += speed;
 		}
 
 		if (input.getKey(GameInput::FRONT).isHeld())
 		{
-			camera.getPosition().z -= speed;
+			movePos.z -= speed;
 		}
 
 		if (input.getKey(GameInput::BACK).isHeld())
 		{
-			camera.getPosition().z += speed;
+			movePos.z += speed;
 		}
 
 		if (input.getKey(GameInput::DOWN).isHeld())
 		{
-			camera.getPosition().y -= speed;
+			movePos.y -= speed;
 		}
 
 		if (input.getKey(GameInput::UP).isHeld())
 		{
-			camera.getPosition().y += speed;
+			movePos.y += speed;
 		}
+		camera.move(movePos);
 
 		static int lastMouseX;
 		static int lastMouseY;
