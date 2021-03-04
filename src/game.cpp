@@ -12,13 +12,25 @@ void Game::onCreate(int screenW, int screenH)
 	font.createFromFile(RESOURCES_PATH "roboto_black.ttf");
 	texture.loadFromFile(RESOURCES_PATH "test.jpg");
 
+	glGenVertexArrays(1, &frontFaceVAO);
+	glBindVertexArray(frontFaceVAO);
 
+	glGenBuffers(1, &frontFaceBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, frontFaceBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(facePositions), facePositions, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
 
+	glGenBuffers(1, &frontFaceIndexBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, frontFaceIndexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(faceIndeces), faceIndeces, GL_STATIC_DRAW);
+
+	
+	glBindVertexArray(0);
 }
 
 void Game::onUpdate(float deltaTime, const GameInput &input)
 {
-	renderer2d.clearScreen();
 
 
 	const float speed = 100 * deltaTime;
@@ -34,15 +46,15 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 	}
 	
 
-	renderer2d.renderRectangle({ posX, posY, 100, 100 }, { 0,0 }, 0, texture);
-	glm::vec4 colors[4] = { Colors_Orange,Colors_Orange ,Colors_Orange ,Colors_Orange };
-	renderer2d.renderRectangle({ 10,10, 100, 100 }, colors, {}, 30);
+	
 
-	renderer2d.renderText({ 100,100 }, "Hello", font, Colors_White);
+	glBindVertexArray(frontFaceVAO);
+	glUseProgram(0);
 
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+	glBindVertexArray(0);
 
-	renderer2d.flush();
 }
 
 void Game::updateWindowMetrics(int screenW, int screenH)

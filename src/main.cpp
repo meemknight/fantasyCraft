@@ -103,7 +103,7 @@ void mouseCallback(GLFWwindow *window, int key, int action, int mods)
 	}
 }
 
-void window_focus_callback(GLFWwindow *window, int focused)
+void windowFocusCallback(GLFWwindow *window, int focused)
 {
 	if (focused)
 	{
@@ -144,6 +144,7 @@ int main()
 	glfwSwapInterval(1);
 	glfwSetKeyCallback(wind, keyCallback);
 	glfwSetMouseButtonCallback(wind, mouseCallback);
+	glfwSetWindowFocusCallback(wind, windowFocusCallback);
 
 	permaAssertComment(gladLoadGL(), "err initializing glad");
 	
@@ -161,12 +162,14 @@ int main()
 		int w = 0; int h = 0;
 		glfwGetWindowSize(wind, &w, &h);
 
+		glClear(GL_COLOR_BUFFER_BIT);
+
+
 	#pragma region movement
 		long newTime = clock();
 		float deltaTime = (float)(newTime - lastTime) / 1000.f;
 		lastTime = clock();
 	#pragma endregion
-
 
 
 		

@@ -1,4 +1,5 @@
 #include "gl2d/gl2d.h"
+#include <glad/glad.h>
 
 class GameInput;
 
@@ -94,7 +95,6 @@ public:
 
 	void resetInputsToZero()
 	{
-
 		for (int i = 0; i < BUTTONS_COUNT; i++)
 		{
 			buttons[i].setRelease();
@@ -128,9 +128,30 @@ private:
 	gl2d::Renderer2D renderer2d;
 	gl2d::Font font;
 	gl2d::Texture texture;
-
 	int screenW, screenH;
 
 	float posX = 0;
 	float posY = 0;
+
+	//front
+	float facePositions[12] = 
+	{
+		0.5, 0.5, 0,
+		-0.5, 0.5, 0,
+		-0.5, -0.5, 0,
+		0.5, -0.5, 0
+	};
+
+	//front
+	unsigned int faceIndeces[6]
+	{
+		0,1,2,
+		2,3,0
+	};
+
+	GLuint frontFaceVAO;
+	GLuint frontFaceBuffer;
+	GLuint frontFaceIndexBuffer;
+
+
 };
