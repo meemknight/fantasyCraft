@@ -40,7 +40,7 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 
 	//input
 	{
-		const float speed = 2 * deltaTime;
+		const float speed = 5 * deltaTime;
 		glm::vec3 movePos = {};
 
 		if (input.getKey(GameInput::LEFT).isHeld())
@@ -90,14 +90,14 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 		}
 	}
 	
-	std::cout << "pos: "  <<  camera.getPosition().x << " " << camera.getPosition().z << "\n";
-	//chunkManager.setPlayerPos(glm::vec2{ camera.getPosition().x, camera.getPosition().z });
+	//std::cout << "pos: "  <<  camera.getPosition().x << " " << camera.getPosition().z << "\n";
+	chunkManager.setPlayerPos(glm::vec2{ camera.getPosition().x, camera.getPosition().z });
 
 	Block b(BLOCKS::grass);
 
-	//renderer.render(camera, chunkManager);
+	renderer.render(camera, chunkManager);
 	
-	renderer.render(camera, *c);
+	//renderer.render(camera, *c);
 	//renderer.render(camera, *c2);
 	//renderer.render(camera, b, { 0,0,0 });
 	//renderer.render(camera, b, { 1,0,0 });

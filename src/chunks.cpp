@@ -1,4 +1,6 @@
 #include "chunks.h"
+#include <algorithm>
+#include <stack>
 
 void Chunk::calculateFaces()
 {
@@ -72,10 +74,11 @@ void Chunk::calculateFaces()
 
 void Chunk::createAChunkStructure()
 {
+	this->clearBlockData();
+
 	int xPadd = position.x * 16;
 	int yPadd = position.y * 16;
 
-	this->clearBlockData();
 	for (int i = 0; i < 16; i++)
 	{
 		for (int j = 0; j < 16; j++)
@@ -139,24 +142,64 @@ void ChunkManager::setPlayerPos(glm::vec2 playerPos)
 	auto moveDelta = newBottomCorner - bottomCorner;
 
 	auto playerInChunk = getPlayerInChunk(playerPos);
-	std::cout << playerInChunk.x << " " << playerInChunk.y << "\n";
+	//std::cout << playerInChunk.x << " " << playerInChunk.y << "\n";
 	//std::cout << moveDelta.x << " " << moveDelta.y << "\n";
 
-	//first delete chunks that are not of use
-	//aka chunks that are in the last grid but not in this one
-	for (int x = 0; x < gridSize; x++)
+	if(moveDelta.x ==0 && moveDelta.y == 0)
 	{
-		for (int z = 0; z < gridSize; z++)
+		//do nothing
+
+	}else
+	{
+		std::cout << "\n\nrecreate:\n";
+		std::vector<int> unusedChunks;
+		unusedChunks.reserve(gridSize * gridSize);
+
+		for(int i=0; i< loadedChunks.size(); i++)
 		{
+			glm::vec2 pos = loadedChunks[i]->getChunkPosition();
+
+			if(
+				pos .x < newBottomCorner.x || pos.x >= newTopCorner.x
+				||
+				pos.y < newBottomCorner.y || pos.y >= newTopCorner.y
+				)
+			{
+				unusedChunks.push_back(i);
+				std::cout << pos.x << " " << pos.y << "\n";
+			}
+		}
+	
+		for (int x = 0; x < gridSize; x++)
+		{
+			for (int z = 0; z < gridSize; z++)
+			{
+				glm::ivec2 pos = newBottomCorner + glm::ivec2{ x, z };
+				
+				auto it = std::find_if(loadedChunks.begin(), loadedChunks.end(), 
+					[pos](Chunk *c){return c->getChunkPosition() == pos;}
+				);
+
+				if(it == loadedChunks.end())
+				{
+					int id = unusedChunks[unusedChunks.size() - 1];
+					unusedChunks.pop_back();
+
+					loadedChunks[id]->position = newBottomCorner + glm::ivec2{ x, z };
+					loadedChunks[id]->createAChunkStructure();
+					loadedChunks[id]->calculateFaces();
+
+				}
+			}
+
+		}
 
 		
-		}
 	}
 
-
-	//bottomCorner = newBottomCorner;
-	//topCorner = newTopCorner;
-	//this->playerPos = playerPos;
+	bottomCorner = newBottomCorner;
+	topCorner = newTopCorner;
+	this->playerPos = playerPos;
 }
 
 glm::ivec2 ChunkManager::computeBottomCorner(glm::vec2 playerPos, int size)
