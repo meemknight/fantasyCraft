@@ -4,7 +4,6 @@
 #include "texture.h"
 #include "block.h"
 
-//todo move in blocks
 enum faces
 {
 	FRONT = 0,
@@ -14,6 +13,11 @@ enum faces
 	LEFT,
 	RIGHT,
 };
+
+#include "chunks.h"
+
+//todo move in blocks
+
 
 
 class ChunksRenderer
@@ -31,6 +35,7 @@ public:
 	}
 
 	void render(Camera c, Block b, glm::ivec3 pos);
+	void render(Camera c, Chunk &chunk);
 
 private:
 

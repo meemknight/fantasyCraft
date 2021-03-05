@@ -1,6 +1,7 @@
-#include "..\include\shader.h"
+#include "shader.h"
 #include <fstream>
 #include <iostream>
+#include "tools.h"
 
 void Shader::loadFromFiles(std::string vertexPath, std::string fragmentPath)
 {
@@ -100,12 +101,15 @@ void DrawBlocksShader::load()
 {
 	loadFromFiles(RESOURCES_PATH "vertex.vert", RESOURCES_PATH "fragment.frag");
 
+	permaAssertComment(id, "shader not found");
+
 	u_playerPos = glGetUniformLocation(id, "u_playerPos");
 	u_modelView = glGetUniformLocation(id, "u_modelView");
 	u_projectionMatrix = glGetUniformLocation(id, "u_projectionMatrix");
 	u_texture = glGetUniformLocation(id, "u_texture");
 	u_pos = glGetUniformLocation(id, "u_pos");
 	u_atlas = glGetUniformLocation(id, "u_atlas");
+
 
 	if(u_projectionMatrix == -1)
 	{

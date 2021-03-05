@@ -35,6 +35,11 @@ public:
 		return true;
 	}
 
+	bool isAir() const
+	{
+		return type == air;
+	}
+
 	const char *getBlockName() const;
 
 	glm::ivec2 getPositionInAtlas(int face);
@@ -43,10 +48,11 @@ public:
 
 	Block & operator=(const Block &other)
 	{
+		this->type = other.type;
 		return *this;
 	}
 
 private:
-	uint8_t type = 0;
+	unsigned char type = 0;
 };
 

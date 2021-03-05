@@ -164,6 +164,8 @@ private:
 	gl2d::Font font;
 	int screenW, screenH;
 
+	Chunk *c;
+	Chunk *c2;
 
 	FirstPersonFlyCamera camera;
 

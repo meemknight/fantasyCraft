@@ -144,3 +144,44 @@ void ChunksRenderer::render(Camera c, Block b, glm::ivec3 pos)
 	glBindVertexArray(0);
 
 }
+
+void ChunksRenderer::render(Camera c, Chunk &chunk)
+{
+	shader.bind();
+	texture.bind(0);
+	shader.setProjectionMatrix(c.getProjectionMatrix());
+	shader.setPlayerPos(c.getPosition());
+	shader.setModelViewMatrix(c.getViewMatrix());
+
+
+	for(int face=0;face<6;face++)
+	{
+		glBindVertexArray(faceVAO[face]);
+
+		for (int i = 0; i < chunk.positions[face].size(); i++)
+		{
+			glm::vec3 pos = chunk.positions[face][i];
+
+			int addX = chunk.getChunkPositionx16().x;
+			int addZ = chunk.getChunkPositionx16().y;
+
+			pos.x += addX;
+			pos.z += addZ;
+
+			auto &uv = chunk.UVs[face][i];
+
+			shader.setPosition(pos.x, pos.y, pos.z);
+			shader.setTextureAtlasCoords(uv.x, uv.y);
+
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		}
+	}
+
+
+
+	
+
+	glBindVertexArray(0);
+
+}
