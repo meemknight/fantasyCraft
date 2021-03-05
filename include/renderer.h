@@ -18,7 +18,8 @@ enum faces
 
 //todo move in blocks
 
-
+class Chunk;
+class ChunkManager;
 
 class ChunksRenderer
 {
@@ -36,6 +37,7 @@ public:
 
 	void render(Camera c, Block b, glm::ivec3 pos);
 	void render(Camera c, Chunk &chunk);
+	void render(Camera c, ChunkManager &chunkManager);
 
 private:
 

@@ -170,4 +170,7 @@ private:
 	FirstPersonFlyCamera camera;
 
 	ChunksRenderer renderer;
+
+	ChunkManager chunkManager;
+
 };

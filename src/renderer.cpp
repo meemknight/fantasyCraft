@@ -178,10 +178,17 @@ void ChunksRenderer::render(Camera c, Chunk &chunk)
 		}
 	}
 
-
-
 	
 
 	glBindVertexArray(0);
+
+}
+
+void ChunksRenderer::render(Camera c, ChunkManager &chunkManager)
+{
+	for(auto &i : chunkManager.loadedChunks)
+	{
+		this->render(c, *i);
+	}
 
 }

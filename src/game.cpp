@@ -18,32 +18,13 @@ void Game::onCreate(int screenW, int screenH)
 	c = new Chunk();
 	c2 = new Chunk();
 
-	c->clearBlockData();
-	for (int i = 0; i < 16; i++)
-	{
-		for (int j = 0; j < 16; j++)
-		{
-			Block b(BLOCKS::grass);
-			*c->getBlock(i, 0, j) = b;
-		}
-	}
-
 	c->getChunkPosition() = { 0,0 };
-	c->calculateFaces();
-
-	c2->clearBlockData();
-	for (int i = 0; i < 16; i++)
-	{
-		for (int j = 0; j < 16; j++)
-		{
-			Block b(BLOCKS::grass);
-			*c2->getBlock(i, 0, j) = b;
-		}
-	}
-
-	c2->calculateFaces();
 	c2->getChunkPosition() = { 1, 0 };
 
+	c->createAChunkStructure();
+	c2->createAChunkStructure();
+
+	chunkManager.setGridSize(16, { 0,0 });
 }
 
 void Game::onUpdate(float deltaTime, const GameInput &input)
@@ -106,13 +87,12 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 	}
 
 
-
 	Block b(BLOCKS::grass);
 
-
-
-	renderer.render(camera, *c);
-	renderer.render(camera, *c2);
+	renderer.render(camera, chunkManager);
+	 
+	//renderer.render(camera, *c);
+	//renderer.render(camera, *c2);
 	//renderer.render(camera, b, { 0,0,0 });
 	//renderer.render(camera, b, { 1,0,0 });
 	//renderer.render(camera, b, { 0,1,0 });

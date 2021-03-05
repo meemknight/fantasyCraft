@@ -46,6 +46,9 @@ void Texture::load(std::string path)
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, decodedImage);
 	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LOD, 4);
+	
+
 
 
 	this->id = id;
