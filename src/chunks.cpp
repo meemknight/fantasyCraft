@@ -83,7 +83,7 @@ void Chunk::createAChunkStructure()
 			for (int h = 0; h < 16; h++)
 			{
 				if (h==0 ||
-					h <= 4*sin( ((i + xPadd)+(j + yPadd)) /2.f )
+					h <= 4*sin( ((i + xPadd)+(j + yPadd)) /15.f )
 					)
 				{
 					Block b(BLOCKS::grass);
@@ -106,9 +106,9 @@ void ChunkManager::setGridSize(int size, glm::ivec2 playerPos)
 
 	loadedChunks.reserve(size * size);
 
+	bottomCorner = computeBottomCorner(playerPos, size);
+	topCorner = computeTopCorner(playerPos, size);
 
-	glm::ivec2 playerInChunk = playerPos / 16;
-	glm::ivec2 cornesOfChunkRegion = playerInChunk - (size / 2);
 
 	for(int x=0;x<size; x++)
 	{
@@ -116,7 +116,7 @@ void ChunkManager::setGridSize(int size, glm::ivec2 playerPos)
 		{
 			Chunk *c = new Chunk;
 
-			c->position = cornesOfChunkRegion + glm::ivec2{ x, z };
+			c->position = bottomCorner + glm::ivec2{ x, z };
 			c->createAChunkStructure();
 
 			c->calculateFaces();
@@ -126,6 +126,77 @@ void ChunkManager::setGridSize(int size, glm::ivec2 playerPos)
 
 	}
 
-
+	gridSize = size;
 	this->playerPos = playerPos;
+}
+
+void ChunkManager::setPlayerPos(glm::vec2 playerPos)
+{
+	auto newBottomCorner = computeBottomCorner(playerPos, gridSize);
+	auto newTopCorner = computeTopCorner(playerPos, gridSize);
+
+	//how should the chunk structure be moved
+	auto moveDelta = newBottomCorner - bottomCorner;
+
+	auto playerInChunk = getPlayerInChunk(playerPos);
+	std::cout << playerInChunk.x << " " << playerInChunk.y << "\n";
+	//std::cout << moveDelta.x << " " << moveDelta.y << "\n";
+
+	//first delete chunks that are not of use
+	//aka chunks that are in the last grid but not in this one
+	for (int x = 0; x < gridSize; x++)
+	{
+		for (int z = 0; z < gridSize; z++)
+		{
+
+		
+		}
+	}
+
+
+	//bottomCorner = newBottomCorner;
+	//topCorner = newTopCorner;
+	//this->playerPos = playerPos;
+}
+
+glm::ivec2 ChunkManager::computeBottomCorner(glm::vec2 playerPos, int size)
+{
+	auto playerInChunk = getPlayerInChunk(playerPos);
+
+	glm::ivec2 cornesOfChunkRegion = playerInChunk - (size / 2);
+	return cornesOfChunkRegion;
+
+}
+
+glm::ivec2 ChunkManager::computeTopCorner(glm::vec2 playerPos, int size)
+{
+	auto playerInChunk = getPlayerInChunk(playerPos);
+
+	glm::ivec2 cornesOfChunkRegion = playerInChunk - (size / 2);
+	return cornesOfChunkRegion + size;
+
+}
+
+glm::ivec2 ChunkManager::getPlayerInChunk(glm::vec2 playerPos)
+{
+	glm::ivec2 playerInChunk = glm::ivec2( playerPos.x / 16, playerPos.y / 16);
+
+	if (playerPos.x < 0)
+	{
+		playerInChunk.x--;
+	}
+
+	if (playerPos.y < 0)
+	{
+		playerInChunk.y--;
+	}
+
+	return playerInChunk;
+
+}
+
+int ChunkManager::getChunkIndex(int x, int z)
+{
+	return x * gridSize + z;
+
 }

@@ -126,7 +126,11 @@ void ChunksRenderer::render(Camera c, Block b, glm::ivec3 pos)
 	shader.bind();
 	texture.bind(0);
 	shader.setProjectionMatrix(c.getProjectionMatrix());
-	shader.setPlayerPos(c.getPosition());
+
+	glm::vec3 playerPos = c.getPosition();
+	//playerPos /= 2.f;
+	shader.setPlayerPos({ playerPos.x, playerPos.y, playerPos.z });
+
 	shader.setModelViewMatrix(c.getViewMatrix());
 
 	for(int i=0; i<6; i++)
@@ -150,7 +154,11 @@ void ChunksRenderer::render(Camera c, Chunk &chunk)
 	shader.bind();
 	texture.bind(0);
 	shader.setProjectionMatrix(c.getProjectionMatrix());
-	shader.setPlayerPos(c.getPosition());
+	
+	glm::vec3 playerPos = c.getPosition();
+	//playerPos /= 2.f;
+	shader.setPlayerPos({ playerPos.x, playerPos.y, playerPos.z });
+
 	shader.setModelViewMatrix(c.getViewMatrix());
 
 
@@ -178,7 +186,6 @@ void ChunksRenderer::render(Camera c, Chunk &chunk)
 		}
 	}
 
-	
 
 	glBindVertexArray(0);
 

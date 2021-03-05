@@ -12,8 +12,8 @@ void Game::onCreate(int screenW, int screenH)
 	renderer2d.create();
 
 	font.createFromFile(RESOURCES_PATH "roboto_black.ttf");
-	
-	camera.getPosition() = {0,0,2};
+
+	camera.getPosition() = { 0,0,0 };
 
 	c = new Chunk();
 	c2 = new Chunk();
@@ -24,7 +24,11 @@ void Game::onCreate(int screenW, int screenH)
 	c->createAChunkStructure();
 	c2->createAChunkStructure();
 
-	chunkManager.setGridSize(16, { 0,0 });
+	chunkManager.setGridSize(4, glm::vec2{camera.getPosition().x, camera.getPosition().z});
+
+	std::cout << chunkManager.bottomCorner.x << " " << chunkManager.bottomCorner.y << "\n";
+	std::cout << chunkManager.topCorner.x << " " << chunkManager.topCorner.y << "\n";
+
 }
 
 void Game::onUpdate(float deltaTime, const GameInput &input)
@@ -85,13 +89,15 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 			lastMouseY = input.getMousePosY();
 		}
 	}
-
+	
+	std::cout << "pos: "  <<  camera.getPosition().x << " " << camera.getPosition().z << "\n";
+	//chunkManager.setPlayerPos(glm::vec2{ camera.getPosition().x, camera.getPosition().z });
 
 	Block b(BLOCKS::grass);
 
-	renderer.render(camera, chunkManager);
-	 
-	//renderer.render(camera, *c);
+	//renderer.render(camera, chunkManager);
+	
+	renderer.render(camera, *c);
 	//renderer.render(camera, *c2);
 	//renderer.render(camera, b, { 0,0,0 });
 	//renderer.render(camera, b, { 1,0,0 });

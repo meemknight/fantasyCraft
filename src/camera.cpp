@@ -12,7 +12,7 @@ glm::mat4 Camera::getProjectionViewMatrix()
 
 glm::mat4 Camera::getViewMatrix()
 {
-	return glm::lookAt(position, position + viewDirection, upVector);
+	return glm::lookAt({0,0,0}, viewDirection, upVector);
 }
 
 glm::mat4 Camera::getProjectionMatrix()
@@ -44,7 +44,7 @@ void Camera::rotateCamera(float x, float y)
 	if (isPositive(oldPos.x) == !isPositive(tiltTest.x) &&
 		isPositive(oldPos.z) == !isPositive(tiltTest.z))
 	{
-	
+		
 	}
 	else
 	{

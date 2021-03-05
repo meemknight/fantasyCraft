@@ -60,12 +60,26 @@ public:
 	
 	void setGridSize(int size, glm::ivec2 playerPos);
 
+	void setPlayerPos(glm::vec2 playerPos);
 
 	friend class ChunksRenderer;
 
+
+	//this defines the rect in which the chunk manager is loaded
+	glm::ivec2 bottomCorner;
+	glm::ivec2 topCorner;
+
 private:
 
+	glm::ivec2 computeBottomCorner(glm::vec2 playerPos, int size);
+	glm::ivec2 computeTopCorner(glm::vec2 playerPos, int size);
+
+	glm::ivec2 getPlayerInChunk(glm::vec2 playerPos);
+
+	int getChunkIndex(int x, int z);
+
 	//this is a grid size x size
+	int gridSize;
 	std::vector< Chunk * > loadedChunks;
 	glm::ivec2 playerPos;
 
