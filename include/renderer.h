@@ -2,6 +2,7 @@
 #include "shader.h"
 #include <camera.h>
 #include "texture.h"
+#include "block.h"
 
 //todo move in blocks
 enum faces
@@ -29,7 +30,7 @@ public:
 		//todo
 	}
 
-	void render(Camera c, glm::ivec3 pos);
+	void render(Camera c, Block b, glm::ivec3 pos);
 
 private:
 

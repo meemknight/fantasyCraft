@@ -7,13 +7,15 @@ uniform vec3 u_playerPos;
 uniform mat4 u_modelView;
 uniform mat4 u_projectionMatrix;
 uniform ivec3 u_pos;
+uniform ivec2 u_atlas;
 
 out vec2 v_textureUV;
+
 
 void main()
 {
 
-	v_textureUV = uv;
+	v_textureUV = (uv + u_atlas) * (1.f/16.f);
 
 	vec4 p = vec4(pos, 1);
 

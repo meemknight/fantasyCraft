@@ -144,56 +144,28 @@ private:
 class Game
 {
 public:
-	void onCreate(int screenW, int screenH);
 	
+	Game(int screenW, int screenH) { onCreate(screenW, screenH); }
+	~Game() { onDestroy(); }
+
 	void onUpdate(float deltaTime, const GameInput &input);
 
-	void onDestroy() {};
 
 	void updateWindowMetrics(int screenW, int screenH);
 
 
 private:
+	void onCreate(int screenW, int screenH);
+
+	void onDestroy() {};
 
 	//game data
 	gl2d::Renderer2D renderer2d;
 	gl2d::Font font;
 	int screenW, screenH;
 
-	//front
-	float facePositions[12] = 
-	{
-		0.5, 0.5, -0.5,
-		-0.5, 0.5, -0.5,
-		-0.5, -0.5, -0.5,
-		0.5, -0.5, -0.5
-	};
-
-	//front
-	float faceTexture[8] =
-	{
-		1,1,
-		0,1,
-		0,0,
-		1,0
-	};
-
-	//front
-	unsigned int faceIndeces[6]
-	{
-		0,1,2,
-		2,3,0
-	};
 
 	FirstPersonFlyCamera camera;
-
-	GLuint frontFaceVAO;
-	GLuint frontFaceBuffer;
-	GLuint frontFaceTextureIndexesBuffer;
-	GLuint frontFaceIndexBuffer;
-
-	DrawBlocksShader shader;
-	Texture texture;
 
 	ChunksRenderer renderer;
 };

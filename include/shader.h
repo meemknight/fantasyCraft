@@ -41,6 +41,7 @@ public:
 	void setPlayerPos(const glm::vec3 &pos);
 	void setTexture(int index);
 	void setPosition(int x, int y, int z);
+	void setTextureAtlasCoords(int x, int y);
 
 private:
 
@@ -49,5 +50,6 @@ private:
 	GLint u_projectionMatrix;
 	GLint u_texture;
 	GLint u_pos;
+	GLint u_atlas;
 
 };

@@ -105,6 +105,7 @@ void DrawBlocksShader::load()
 	u_projectionMatrix = glGetUniformLocation(id, "u_projectionMatrix");
 	u_texture = glGetUniformLocation(id, "u_texture");
 	u_pos = glGetUniformLocation(id, "u_pos");
+	u_atlas = glGetUniformLocation(id, "u_atlas");
 
 	if(u_projectionMatrix == -1)
 	{
@@ -138,4 +139,9 @@ void DrawBlocksShader::setTexture(int index)
 void DrawBlocksShader::setPosition(int x, int y, int z)
 {
 	glUniform3i(u_pos, x, y, z);
+}
+
+void DrawBlocksShader::setTextureAtlasCoords(int x, int y)
+{
+	glUniform2i(u_atlas, x, y);
 }

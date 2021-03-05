@@ -12,9 +12,6 @@ void Game::onCreate(int screenW, int screenH)
 
 	font.createFromFile(RESOURCES_PATH "roboto_black.ttf");
 	
-
-	shader.load();
-
 	camera.getPosition() = {0,0,2};
 
 }
@@ -23,6 +20,8 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+	glDisable(GL_MULTISAMPLE);
+	//glEnable(GL_MULTISAMPLE);
 
 	//input
 	{
@@ -76,14 +75,16 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 		}
 	}
 
-	renderer.render(camera, { 0,0,0 });
-	renderer.render(camera, { 1,0,0 });
-	renderer.render(camera, { 0,1,0 });
-	renderer.render(camera, {1,1,0});
-	renderer.render(camera, { 0,0,1 });
-	renderer.render(camera, { 1,0,1 });
-	renderer.render(camera, { 0,1,1 });
-	renderer.render(camera, { 1,1,1 });
+	Block b(BLOCKS::grass);
+
+	renderer.render(camera, b, { 0,0,0 });
+	renderer.render(camera, b, { 1,0,0 });
+	renderer.render(camera, b, { 0,1,0 });
+	renderer.render(camera, b, {1,1,0});
+	renderer.render(camera, b, { 0,0,1 });
+	renderer.render(camera, b, { 1,0,1 });
+	renderer.render(camera, b, { 0,1,1 });
+	renderer.render(camera, b, { 1,1,1 });
 
 }
 

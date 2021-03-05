@@ -3,7 +3,7 @@
 void ChunksRenderer::init()
 {
 
-	texture.load(RESOURCES_PATH "test.jpg");
+	texture.load(RESOURCES_PATH "blocks.png");
 
 	//front
 	float facePositions[6][12] =
@@ -69,10 +69,10 @@ void ChunksRenderer::init()
 		0,0,
 		1,0,
 
+		1,0,
 		1,1,
 		0,1,
 		0,0,
-		1,0,
 
 		1,1,
 		0,1,
@@ -121,17 +121,20 @@ void ChunksRenderer::init()
 
 }
 
-void ChunksRenderer::render(Camera c, glm::ivec3 pos)
+void ChunksRenderer::render(Camera c, Block b, glm::ivec3 pos)
 {
+	shader.bind();
+	texture.bind(0);
+	shader.setProjectionMatrix(c.getProjectionMatrix());
+	shader.setPlayerPos(c.getPosition());
+	shader.setModelViewMatrix(c.getViewMatrix());
+
 	for(int i=0; i<6; i++)
 	{
 		glBindVertexArray(faceVAO[i]);
-		shader.bind();
-		shader.setPlayerPos(c.getPosition());
-		shader.setProjectionMatrix(c.getProjectionMatrix());
-		shader.setModelViewMatrix(c.getViewMatrix());
+		
 		shader.setPosition(pos.x, pos.y, pos.z);
-		texture.bind(0);
+		shader.setTextureAtlasCoords(b.getPositionInAtlas(i).x, b.getPositionInAtlas(i).y);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

@@ -174,10 +174,8 @@ int main()
 	
 	gl2d::init();
 	
-	Game game;
-	game.onCreate(500, 500);
-
-
+	
+	Game game(500, 500);
 
 	long lastTime = clock();
 
@@ -209,7 +207,7 @@ int main()
 		glfwPollEvents();
 	}
 	
-	game.onDestroy();
+	
 
 	//if you want the console to stay after closing the window
 	//std::cin.clear();
