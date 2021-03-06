@@ -97,6 +97,8 @@ void ChunksRenderer::init()
 	glGenBuffers(6, faceBuffer);
 	glGenBuffers(6, faceTextureIndexesBuffer);
 
+	glGenBuffers(6, positionsbuffer);
+	glGenBuffers(6, textureUVbuffer);
 
 	for(int i=0; i<6;i++)
 	{
@@ -114,13 +116,28 @@ void ChunksRenderer::init()
 		
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faceIndexBuffer);
 
+		
+		glBindBuffer(GL_ARRAY_BUFFER, positionsbuffer[i]);
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 3, GL_INT, GL_FALSE, 0, (void *)0);
+		glVertexAttribDivisor(2, 1);
+
+		glBindBuffer(GL_ARRAY_BUFFER, textureUVbuffer[i]);
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, (void *)0);
+		glVertexAttribDivisor(3, 1);
+		
+
 	}
 
 
 	glBindVertexArray(0);
 
+
+
 }
 
+//deprecated
 void ChunksRenderer::render(Camera c, Block b, glm::ivec3 pos)
 {
 	shader.bind();
@@ -149,6 +166,7 @@ void ChunksRenderer::render(Camera c, Block b, glm::ivec3 pos)
 
 }
 
+//deprecated
 void ChunksRenderer::render(Camera c, Chunk &chunk)
 {
 	shader.bind();
@@ -156,7 +174,6 @@ void ChunksRenderer::render(Camera c, Chunk &chunk)
 	shader.setProjectionMatrix(c.getProjectionMatrix());
 	
 	glm::vec3 playerPos = c.getPosition();
-	//playerPos /= 2.f;
 	shader.setPlayerPos({ playerPos.x, playerPos.y, playerPos.z });
 
 	shader.setModelViewMatrix(c.getViewMatrix());
@@ -168,7 +185,7 @@ void ChunksRenderer::render(Camera c, Chunk &chunk)
 
 		for (int i = 0; i < chunk.positions[face].size(); i++)
 		{
-			glm::vec3 pos = chunk.positions[face][i];
+			glm::ivec3 pos = chunk.positions[face][i];
 
 			int addX = chunk.getChunkPositionx16().x;
 			int addZ = chunk.getChunkPositionx16().y;
@@ -193,9 +210,66 @@ void ChunksRenderer::render(Camera c, Chunk &chunk)
 
 void ChunksRenderer::render(Camera c, ChunkManager &chunkManager)
 {
-	for(auto &i : chunkManager.loadedChunks)
+	shader.bind();
+	texture.bind(0);
+	shader.setProjectionMatrix(c.getProjectionMatrix());
+
+	glm::vec3 playerPos = c.getPosition();
+	shader.setPlayerPos({ playerPos.x, playerPos.y, playerPos.z });
+
+	shader.setModelViewMatrix(c.getViewMatrix());
+
+	for (int face = 0; face < 6; face++)
 	{
-		this->render(c, *i);
+		facesVector.clear();
+		uvVector.clear();
+
+		for (auto c : chunkManager.loadedChunks)
+		{
+			int addX = c->getChunkPositionx16().x;
+			int addZ = c->getChunkPositionx16().y;
+
+			for(int i=0;i< c->positions[face].size(); i++)
+			{
+				glm::ivec3 pos = c->positions[face][i];
+
+				pos.x += addX;
+				pos.z += addZ;
+
+				glm::vec2 uv = c->UVs[face][i];
+
+				facesVector.push_back(pos);
+				uvVector.push_back(uv);
+			}
+
+		}
+			
+		glBindVertexArray(faceVAO[face]);
+			
+
+		glBindBuffer(GL_ARRAY_BUFFER, positionsbuffer[face]);
+		glEnableVertexAttribArray(2);
+		glVertexAttribIPointer(2, 3, GL_INT, 0, (void *)0);
+		glVertexAttribDivisor(2, 1);
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::ivec3) * facesVector.size(),
+			facesVector.data(), GL_STREAM_DRAW);
+
+		glBindBuffer(GL_ARRAY_BUFFER, textureUVbuffer[face]);
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, (void *)0);
+		glVertexAttribDivisor(3, 1);
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * uvVector.size(),
+			uvVector.data(), GL_STREAM_DRAW);
+
+		glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, facesVector.size());
+
+
+
 	}
+
+	
+	glBindVertexArray(0);
 
 }

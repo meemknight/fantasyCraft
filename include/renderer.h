@@ -52,4 +52,11 @@ private:
 	GLuint faceIndexBuffer;
 	Texture texture;
 
+
+	GLuint positionsbuffer[6];
+	GLuint textureUVbuffer[6];
+
+
+	std::vector<glm::ivec3> facesVector;
+	std::vector<glm::vec2> uvVector;
 };

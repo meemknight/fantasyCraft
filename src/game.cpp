@@ -43,6 +43,8 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 		const float speed = 10 * deltaTime;
 		glm::vec3 movePos = {};
 
+
+
 		if (input.getKey(GameInput::LEFT).isHeld())
 		{
 			movePos.x -= speed;

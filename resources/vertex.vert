@@ -2,6 +2,8 @@
 
 in layout(location = 0) vec3 pos;
 in layout(location = 1) vec2 uv;
+in layout(location = 2) ivec3 blockPos;
+in layout(location = 3) vec2 atlasUV;
 
 uniform vec3 u_playerPos;
 uniform mat4 u_modelView;
@@ -15,13 +17,15 @@ out vec2 v_textureUV;
 void main()
 {
 
-	v_textureUV = (uv + u_atlas) * (1.f/16.f);
+	//v_textureUV = (uv + u_atlas) * (1.f/16.f);
+	v_textureUV = (uv + atlasUV) * (1.f/16.f);
 
 	vec4 p = vec4(pos, 1);
 
 	//move the block by player position
 	p.xyz -= u_playerPos;
-	p.xyz += u_pos;
+	//p.xyz += u_pos;
+	p.xyz += blockPos;
 
 	p = u_projectionMatrix * u_modelView * p;
 

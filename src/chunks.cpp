@@ -151,7 +151,7 @@ void ChunkManager::setPlayerPos(glm::vec2 playerPos)
 
 	}else
 	{
-		std::cout << "\n\nrecreate:\n";
+		//std::cout << "\n\nrecreate:\n";
 		std::vector<int> unusedChunks;
 		unusedChunks.reserve(gridSize * gridSize);
 
@@ -166,7 +166,7 @@ void ChunkManager::setPlayerPos(glm::vec2 playerPos)
 				)
 			{
 				unusedChunks.push_back(i);
-				std::cout << pos.x << " " << pos.y << "\n";
+				//std::cout << pos.x << " " << pos.y << "\n";
 			}
 		}
 	
