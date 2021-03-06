@@ -37,7 +37,7 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 	glEnable(GL_CULL_FACE);
 	glDisable(GL_MULTISAMPLE);
 	//glEnable(GL_MULTISAMPLE);
-
+	
 	//input
 	{
 		const float speed = 10 * deltaTime;
