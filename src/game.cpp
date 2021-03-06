@@ -40,7 +40,7 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 
 	//input
 	{
-		const float speed = 5 * deltaTime;
+		const float speed = 10 * deltaTime;
 		glm::vec3 movePos = {};
 
 		if (input.getKey(GameInput::LEFT).isHeld())
