@@ -42,7 +42,11 @@ public:
 	friend class ChunksRenderer;
 	friend class ChunkManager;
 
+
 protected:
+	
+	void updateNeighbours();
+	void removeReferenceToNeighbours(); //todo rename mabe
 
 	std::vector<glm::ivec3> positions[6];
 	std::vector<glm::ivec2> UVs[6];
@@ -50,7 +54,11 @@ protected:
 	Block blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_HEIGHT];
 	glm::ivec2 position;
 
-	
+	Chunk *chunkInFront = 0;
+	Chunk *chunkInBack = 0;
+	Chunk *chunkAtLeft = 0;
+	Chunk *chunkAtRight = 0;
+
 };
 
 
@@ -77,6 +85,8 @@ private:
 	glm::ivec2 getPlayerInChunk(glm::vec2 playerPos);
 
 	int getChunkIndex(int x, int z);
+
+	void setNeighbours(std::vector<int> &newCreatedChunks, glm::ivec2 newBottomCorner);
 
 	//this is a grid size x size
 	int gridSize;

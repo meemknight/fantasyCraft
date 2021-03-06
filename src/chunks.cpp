@@ -28,14 +28,39 @@ void Chunk::calculateFaces()
 
 				//set faces
 				//front
-				if (z >= CHUNK_SIZE - 1 || getBlock(x, y, z + 1)->isTransparent())
+				if(z >= CHUNK_SIZE - 1)
+				{
+					//if there is a chunk
+					if(chunkInFront)
+					{
+						//if(chunkInFront->getBlock(x, y, 0)->isTransparent())
+						//{
+							positions[FRONT].emplace_back(x, y, z);
+							UVs[FRONT].push_back(b.getPositionInAtlas(FRONT));
+						//}
+					}
+					
+				}else
+				if (getBlock(x, y, z + 1)->isTransparent())
 				{
 					positions[FRONT].emplace_back(x, y, z);
 					UVs[FRONT].push_back(b.getPositionInAtlas(FRONT));
 				}
 
 				//back
-				if (z <= 0 || getBlock(x, y, z - 1)->isTransparent())
+				if(z <= 0)
+				{
+					//if(chunkInBack)
+					//{
+						//if (chunkInBack->getBlock(x, y, CHUNK_SIZE-1)->isTransparent())
+						//{
+							positions[BACK].emplace_back(x, y, z);
+							UVs[BACK].push_back(b.getPositionInAtlas(BACK));
+						//}
+					//}
+
+				}else
+				if (getBlock(x, y, z - 1)->isTransparent())
 				{
 					positions[BACK].emplace_back(x, y, z);
 					UVs[BACK].push_back(b.getPositionInAtlas(BACK));
@@ -99,7 +124,56 @@ void Chunk::createAChunkStructure()
 		}
 	}
 
-	this->calculateFaces();
+	//this->calculateFaces();
+
+}
+
+void Chunk::updateNeighbours()
+{
+	if(chunkInFront)
+	{
+		chunkInFront->chunkInBack = this;
+	}
+
+	if(chunkInBack)
+	{
+		chunkInBack->chunkInFront = this;
+	}
+
+	if(chunkAtLeft)
+	{
+		chunkAtLeft->chunkAtRight = this;
+	}
+
+	if(chunkAtRight)
+	{
+		chunkAtRight->chunkAtLeft = this;
+	}
+
+}
+
+void Chunk::removeReferenceToNeighbours()
+{
+	if (chunkInFront)
+	{
+		chunkInFront->chunkInBack = nullptr;
+	}
+
+	if (chunkInBack)
+	{
+		chunkInBack->chunkInFront = nullptr;
+	}
+
+	if (chunkAtLeft)
+	{
+		chunkAtLeft->chunkAtRight = nullptr;
+	}
+
+	if (chunkAtRight)
+	{
+		chunkAtRight->chunkAtLeft = nullptr;
+	}
+
 
 }
 
@@ -112,6 +186,7 @@ void ChunkManager::setGridSize(int size, glm::ivec2 playerPos)
 	bottomCorner = computeBottomCorner(playerPos, size);
 	topCorner = computeTopCorner(playerPos, size);
 
+	std::vector<int> newCreatedChunks;
 
 	for(int x=0;x<size; x++)
 	{
@@ -122,11 +197,19 @@ void ChunkManager::setGridSize(int size, glm::ivec2 playerPos)
 			c->position = bottomCorner + glm::ivec2{ x, z };
 			c->createAChunkStructure();
 
-			c->calculateFaces();
 
 			loadedChunks.push_back(c);
+
+			newCreatedChunks.push_back(loadedChunks.size()-1);
 		}
 
+	}
+
+	setNeighbours(newCreatedChunks, bottomCorner);
+
+	for(auto id : newCreatedChunks)
+	{
+		loadedChunks[id]->calculateFaces();
 	}
 
 	gridSize = size;
@@ -167,9 +250,16 @@ void ChunkManager::setPlayerPos(glm::vec2 playerPos)
 			{
 				unusedChunks.push_back(i);
 				//std::cout << pos.x << " " << pos.y << "\n";
+
+				//clear data
+				loadedChunks[i]->removeReferenceToNeighbours();
+
 			}
 		}
 	
+		std::vector<int> newCreatedChunks;
+		newCreatedChunks.reserve(unusedChunks.size());
+
 		for (int x = 0; x < gridSize; x++)
 		{
 			for (int z = 0; z < gridSize; z++)
@@ -185,16 +275,26 @@ void ChunkManager::setPlayerPos(glm::vec2 playerPos)
 					int id = unusedChunks[unusedChunks.size() - 1];
 					unusedChunks.pop_back();
 
+					newCreatedChunks.push_back(id);
+
 					loadedChunks[id]->position = newBottomCorner + glm::ivec2{ x, z };
-					loadedChunks[id]->createAChunkStructure();
-					loadedChunks[id]->calculateFaces();
+			
 
 				}
 			}
 
 		}
 
+		setNeighbours(newCreatedChunks, newBottomCorner);
 		
+		for(auto id : newCreatedChunks)
+		{
+
+			loadedChunks[id]->createAChunkStructure();
+			loadedChunks[id]->calculateFaces();
+		
+		}
+
 	}
 
 	bottomCorner = newBottomCorner;
@@ -241,5 +341,57 @@ glm::ivec2 ChunkManager::getPlayerInChunk(glm::vec2 playerPos)
 int ChunkManager::getChunkIndex(int x, int z)
 {
 	return x * gridSize + z;
+
+}
+
+void ChunkManager::setNeighbours(std::vector<int> &newCreatedChunks, glm::ivec2 newBottomCorner)
+{
+	for (auto id : newCreatedChunks)
+	{
+
+		int x = loadedChunks[id]->getChunkPosition().x;
+		int z = loadedChunks[id]->getChunkPosition().y;
+
+		glm::ivec2 posFront = newBottomCorner + glm::ivec2{ x, z - 1 };
+		glm::ivec2 posBack = newBottomCorner + glm::ivec2{ x, z + 1 };
+		glm::ivec2 posLeft = newBottomCorner + glm::ivec2{ x - 1, z };
+		glm::ivec2 posRight = newBottomCorner + glm::ivec2{ x + 1, z };
+
+		auto itFront = std::find_if(loadedChunks.begin(), loadedChunks.end(),
+			[pos = posFront](Chunk *c) { return c->getChunkPosition() == pos; });
+
+		auto itBack = std::find_if(loadedChunks.begin(), loadedChunks.end(),
+			[pos = posBack](Chunk *c) { return c->getChunkPosition() == pos; });
+
+		auto itLeft = std::find_if(loadedChunks.begin(), loadedChunks.end(),
+			[pos = posLeft](Chunk *c) { return c->getChunkPosition() == pos; });
+
+		auto itRight = std::find_if(loadedChunks.begin(), loadedChunks.end(),
+			[pos = posRight](Chunk *c) { return c->getChunkPosition() == pos; });
+
+		if (itFront != loadedChunks.end())
+		{
+			loadedChunks[id]->chunkInFront = *itFront;
+		}
+
+		if (itBack != loadedChunks.end())
+		{
+			loadedChunks[id]->chunkInBack = *itBack;
+		}
+
+		if (itLeft != loadedChunks.end())
+		{
+			loadedChunks[id]->chunkAtLeft = *itLeft;
+		}
+
+		if (itRight != loadedChunks.end())
+		{
+			loadedChunks[id]->chunkAtRight = *itRight;
+		}
+
+
+		loadedChunks[id]->updateNeighbours();
+
+	}
 
 }
