@@ -1,6 +1,7 @@
 #include "chunks.h"
 #include <algorithm>
 #include <stack>
+#include <set>
 
 void Chunk::calculateFaces()
 {
@@ -33,11 +34,11 @@ void Chunk::calculateFaces()
 					//if there is a chunk
 					if(chunkInFront)
 					{
-						//if(chunkInFront->getBlock(x, y, 0)->isTransparent())
-						//{
+						if(chunkInFront->getBlock(x, y, 0)->isTransparent())
+						{
 							positions[FRONT].emplace_back(x, y, z);
 							UVs[FRONT].push_back(b.getPositionInAtlas(FRONT));
-						//}
+						}
 					}
 					
 				}else
@@ -50,14 +51,14 @@ void Chunk::calculateFaces()
 				//back
 				if(z <= 0)
 				{
-					//if(chunkInBack)
-					//{
-						//if (chunkInBack->getBlock(x, y, CHUNK_SIZE-1)->isTransparent())
-						//{
+					if(chunkInBack)
+					{
+						if (chunkInBack->getBlock(x, y, CHUNK_SIZE-1)->isTransparent())
+						{
 							positions[BACK].emplace_back(x, y, z);
 							UVs[BACK].push_back(b.getPositionInAtlas(BACK));
-						//}
-					//}
+						}
+					}
 
 				}else
 				if (getBlock(x, y, z - 1)->isTransparent())
@@ -81,14 +82,38 @@ void Chunk::calculateFaces()
 				}
 
 				//left
-				if (x <= 0 || getBlock(x - 1, y, z)->isTransparent())
+				if(x <= 0)
+				{
+					if(chunkAtLeft)
+					{
+						if(chunkAtLeft->getBlock(CHUNK_SIZE-1, y, z)->isTransparent())
+						{
+							positions[LEFT].emplace_back(x, y, z);
+							UVs[LEFT].push_back(b.getPositionInAtlas(LEFT));
+						}
+					}
+
+				}else
+				if (getBlock(x - 1, y, z)->isTransparent())
 				{
 					positions[LEFT].emplace_back(x, y, z);
 					UVs[LEFT].push_back(b.getPositionInAtlas(LEFT));
 				}
 
 				//right
-				if (x >= CHUNK_SIZE - 1 || getBlock(x + 1, y, z)->isTransparent())
+				if (x >= CHUNK_SIZE - 1)
+				{
+					if(chunkAtRight)
+					{
+						if(chunkAtRight->getBlock(0, y, z)->isTransparent())
+						{
+							positions[RIGHT].emplace_back(x, y, z);
+							UVs[RIGHT].push_back(b.getPositionInAtlas(RIGHT));
+						}
+					}
+
+				}else
+				if (getBlock(x + 1, y, z)->isTransparent())
 				{
 					positions[RIGHT].emplace_back(x, y, z);
 					UVs[RIGHT].push_back(b.getPositionInAtlas(RIGHT));
@@ -124,7 +149,6 @@ void Chunk::createAChunkStructure()
 		}
 	}
 
-	//this->calculateFaces();
 
 }
 
@@ -179,6 +203,9 @@ void Chunk::removeReferenceToNeighbours()
 
 void ChunkManager::setGridSize(int size, glm::ivec2 playerPos)
 {
+	gridSize = size;
+	this->playerPos = playerPos;
+
 	loadedChunks.clear();//todo
 
 	loadedChunks.reserve(size * size);
@@ -186,7 +213,7 @@ void ChunkManager::setGridSize(int size, glm::ivec2 playerPos)
 	bottomCorner = computeBottomCorner(playerPos, size);
 	topCorner = computeTopCorner(playerPos, size);
 
-	std::vector<int> newCreatedChunks;
+	std::set<int> newCreatedChunks;
 
 	for(int x=0;x<size; x++)
 	{
@@ -200,20 +227,20 @@ void ChunkManager::setGridSize(int size, glm::ivec2 playerPos)
 
 			loadedChunks.push_back(c);
 
-			newCreatedChunks.push_back(loadedChunks.size()-1);
+			newCreatedChunks.insert(loadedChunks.size()-1);
 		}
 
 	}
 
-	setNeighbours(newCreatedChunks, bottomCorner);
+	std::set<int> chunksToRecalculate;
+	setNeighbours(newCreatedChunks, chunksToRecalculate);
 
 	for(auto id : newCreatedChunks)
 	{
 		loadedChunks[id]->calculateFaces();
 	}
 
-	gridSize = size;
-	this->playerPos = playerPos;
+	
 }
 
 void ChunkManager::setPlayerPos(glm::vec2 playerPos)
@@ -257,8 +284,8 @@ void ChunkManager::setPlayerPos(glm::vec2 playerPos)
 			}
 		}
 	
-		std::vector<int> newCreatedChunks;
-		newCreatedChunks.reserve(unusedChunks.size());
+		std::set<int> newCreatedChunks;
+		//newCreatedChunks.reserve(unusedChunks.size());
 
 		for (int x = 0; x < gridSize; x++)
 		{
@@ -275,24 +302,33 @@ void ChunkManager::setPlayerPos(glm::vec2 playerPos)
 					int id = unusedChunks[unusedChunks.size() - 1];
 					unusedChunks.pop_back();
 
-					newCreatedChunks.push_back(id);
+					newCreatedChunks.insert(id);
 
 					loadedChunks[id]->position = newBottomCorner + glm::ivec2{ x, z };
 			
+					loadedChunks[id]->createAChunkStructure();
 
 				}
+
 			}
 
 		}
+		
+		std::set<int> chunksToRecalculate;
 
-		setNeighbours(newCreatedChunks, newBottomCorner);
+		setNeighbours(newCreatedChunks, chunksToRecalculate);
 		
 		for(auto id : newCreatedChunks)
 		{
 
-			loadedChunks[id]->createAChunkStructure();
 			loadedChunks[id]->calculateFaces();
 		
+		}
+
+		for(auto id: chunksToRecalculate)
+		{
+			//todo here we can implement calculate faces only for edges 
+			loadedChunks[id]->calculateFaces();
 		}
 
 	}
@@ -344,7 +380,7 @@ int ChunkManager::getChunkIndex(int x, int z)
 
 }
 
-void ChunkManager::setNeighbours(std::vector<int> &newCreatedChunks, glm::ivec2 newBottomCorner)
+void ChunkManager::setNeighbours(std::set<int> &newCreatedChunks, std::set<int> &chunksToRecalculate)
 {
 	for (auto id : newCreatedChunks)
 	{
@@ -352,43 +388,72 @@ void ChunkManager::setNeighbours(std::vector<int> &newCreatedChunks, glm::ivec2 
 		int x = loadedChunks[id]->getChunkPosition().x;
 		int z = loadedChunks[id]->getChunkPosition().y;
 
-		glm::ivec2 posFront = newBottomCorner + glm::ivec2{ x, z - 1 };
-		glm::ivec2 posBack = newBottomCorner + glm::ivec2{ x, z + 1 };
-		glm::ivec2 posLeft = newBottomCorner + glm::ivec2{ x - 1, z };
-		glm::ivec2 posRight = newBottomCorner + glm::ivec2{ x + 1, z };
+		glm::ivec2 posFront = glm::ivec2{ x, z + 1 };
+		glm::ivec2 posBack	= glm::ivec2{ x, z - 1 };
+		glm::ivec2 posLeft	= glm::ivec2{ x - 1, z };
+		glm::ivec2 posRight = glm::ivec2{ x + 1, z };
 
-		auto itFront = std::find_if(loadedChunks.begin(), loadedChunks.end(),
-			[pos = posFront](Chunk *c) { return c->getChunkPosition() == pos; });
+		
+		//if (!loadedChunks[id]->chunkInFront)
+		//{
+			auto itFront = std::find_if(loadedChunks.begin(), loadedChunks.end(),
+						[pos = posFront](Chunk *c) { return c->getChunkPosition() == pos; });
 
-		auto itBack = std::find_if(loadedChunks.begin(), loadedChunks.end(),
-			[pos = posBack](Chunk *c) { return c->getChunkPosition() == pos; });
+			if (itFront != loadedChunks.end())
+			{
+				loadedChunks[id]->chunkInFront = *itFront;
 
-		auto itLeft = std::find_if(loadedChunks.begin(), loadedChunks.end(),
-			[pos = posLeft](Chunk *c) { return c->getChunkPosition() == pos; });
+				auto ind = itFront - loadedChunks.begin();
+				chunksToRecalculate.insert(ind);
+			}
 
-		auto itRight = std::find_if(loadedChunks.begin(), loadedChunks.end(),
-			[pos = posRight](Chunk *c) { return c->getChunkPosition() == pos; });
+		//}
+		
+		//if(!loadedChunks[id]->chunkInBack)
+		//{
+			auto itBack = std::find_if(loadedChunks.begin(), loadedChunks.end(),
+				[pos = posBack](Chunk *c) { return c->getChunkPosition() == pos; });
 
-		if (itFront != loadedChunks.end())
-		{
-			loadedChunks[id]->chunkInFront = *itFront;
-		}
+			if (itBack != loadedChunks.end())
+			{
+				loadedChunks[id]->chunkInBack = *itBack;
 
-		if (itBack != loadedChunks.end())
-		{
-			loadedChunks[id]->chunkInBack = *itBack;
-		}
+				auto ind = itBack - loadedChunks.begin();
+				chunksToRecalculate.insert(ind);
+			}
+		
+		//}
 
-		if (itLeft != loadedChunks.end())
-		{
-			loadedChunks[id]->chunkAtLeft = *itLeft;
-		}
+		
+		//if(!loadedChunks[id]->chunkAtLeft)
+		//{
+			auto itLeft = std::find_if(loadedChunks.begin(), loadedChunks.end(),
+				[pos = posLeft](Chunk *c) { return c->getChunkPosition() == pos; });
 
-		if (itRight != loadedChunks.end())
-		{
-			loadedChunks[id]->chunkAtRight = *itRight;
-		}
+			if (itLeft != loadedChunks.end())
+			{
+				loadedChunks[id]->chunkAtLeft = *itLeft;
 
+
+				auto ind = itLeft - loadedChunks.begin();
+				chunksToRecalculate.insert(ind);
+			}
+		//}
+
+		//if(!loadedChunks[id]->chunkAtRight)
+		//{
+			auto itRight = std::find_if(loadedChunks.begin(), loadedChunks.end(),
+				[pos = posRight](Chunk *c) { return c->getChunkPosition() == pos; });
+
+			if (itRight != loadedChunks.end())
+			{
+				loadedChunks[id]->chunkAtRight = *itRight;
+		
+				auto ind = itRight - loadedChunks.begin();
+				chunksToRecalculate.insert(ind);
+			}
+
+		//}
 
 		loadedChunks[id]->updateNeighbours();
 

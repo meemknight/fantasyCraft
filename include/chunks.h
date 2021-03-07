@@ -4,6 +4,7 @@
 #include <string.h>
 #include <glm/vec3.hpp>
 #include "renderer.h"
+#include <set>
 
 constexpr int CHUNK_SIZE = 16;
 constexpr int CHUNK_HEIGHT = 256;
@@ -86,7 +87,7 @@ private:
 
 	int getChunkIndex(int x, int z);
 
-	void setNeighbours(std::vector<int> &newCreatedChunks, glm::ivec2 newBottomCorner);
+	void setNeighbours(std::set<int> &newCreatedChunks, std::set<int> &chunksToRecalculate);
 
 	//this is a grid size x size
 	int gridSize;
