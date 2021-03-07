@@ -13,7 +13,7 @@ void Game::onCreate(int screenW, int screenH)
 
 	font.createFromFile(RESOURCES_PATH "roboto_black.ttf");
 
-	camera.getPosition() = { 0,0,0 };
+	camera.getPosition() = { 0,70,0 };
 
 	c = new Chunk();
 	c2 = new Chunk();
@@ -24,7 +24,7 @@ void Game::onCreate(int screenW, int screenH)
 	c->createAChunkStructure();
 	c2->createAChunkStructure();
 
-	chunkManager.setGridSize(4, glm::vec2{camera.getPosition().x, camera.getPosition().z});
+	chunkManager.setGridSize(8, glm::vec2{camera.getPosition().x, camera.getPosition().z});
 
 	std::cout << chunkManager.bottomCorner.x << " " << chunkManager.bottomCorner.y << "\n";
 	std::cout << chunkManager.topCorner.x << " " << chunkManager.topCorner.y << "\n";

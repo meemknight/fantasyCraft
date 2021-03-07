@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <stack>
 #include <set>
+#include <FastNoiseSIMD.h>
+
 
 void Chunk::calculateFaces()
 {
@@ -17,7 +19,7 @@ void Chunk::calculateFaces()
 
 	for (int x = 0; x < CHUNK_SIZE; x++)
 		for (int z = 0; z < CHUNK_SIZE; z++)
-			for (int y = 0; y < CHUNK_SIZE; y++)
+			for (int y = 0; y < CHUNK_HEIGHT; y++)
 			{
 
 				auto &b = *getBlock(x, y, z);
@@ -122,26 +124,46 @@ void Chunk::calculateFaces()
 
 }
 
+
+//todo move
+static FastNoiseSIMD *heightNoise = FastNoiseSIMD::NewFastNoiseSIMD();
+
 void Chunk::createAChunkStructure()
 {
+	heightNoise->SetNoiseType(FastNoiseSIMD::NoiseType::Perlin);
+	{
+		float scale = 0.5;
+		heightNoise->SetAxisScales(scale, scale, scale);
+		heightNoise->SetFrequency(0.022);
+		heightNoise->SetFractalOctaves(2);
+	}
+
 	this->clearBlockData();
 
 	int xPadd = position.x * 16;
 	int yPadd = position.y * 16;
 
+
+	float *testNoise
+		= heightNoise->GetSimplexFractalSet(xPadd, 0, yPadd, CHUNK_SIZE, (1), CHUNK_SIZE, 1);
+
+	auto getNoiseVal = [testNoise](int x, int y, int z)
+	{
+		return testNoise[x * CHUNK_SIZE * (1)+y * CHUNK_SIZE + z];
+	};
+
+
 	for (int i = 0; i < 16; i++)
 	{
 		for (int j = 0; j < 16; j++)
 		{
-			for (int h = 0; h < 16; h++)
+			int height = 50 + getNoiseVal(i, 0, j) * 30;
+
+			for (int h = 0; h < height; h++)
 			{
-				if (h==0 ||
-					h <= 4*sin( ((i + xPadd)+(j + yPadd)) /15.f )
-					)
-				{
-					Block b(BLOCKS::grass);
-					*this->getBlock(i, h, j) = b;
-				}
+					
+				Block b(BLOCKS::grass);
+				*this->getBlock(i, h, j) = b;
 				
 			}
 
@@ -149,6 +171,7 @@ void Chunk::createAChunkStructure()
 		}
 	}
 
+	FastNoiseSIMD::FreeNoiseSet(testNoise);
 
 }
 
