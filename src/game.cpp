@@ -16,7 +16,7 @@ void Game::onCreate(int screenW, int screenH)
 	camera.getPosition() = { 0,70,0 };
 
 
-	chunkManager.setGridSize(8, glm::vec2{camera.getPosition().x, camera.getPosition().z});
+	chunkManager.setGridSize(16, glm::vec2{camera.getPosition().x, camera.getPosition().z});
 
 	std::cout << chunkManager.bottomCorner.x << " " << chunkManager.bottomCorner.y << "\n";
 	std::cout << chunkManager.topCorner.x << " " << chunkManager.topCorner.y << "\n";
