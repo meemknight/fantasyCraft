@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <stack>
 #include <set>
-#include <FastNoiseSIMD.h>
 
 
 void Chunk::calculateFaces()
@@ -128,53 +127,6 @@ void Chunk::calculateFaces()
 //todo move
 static FastNoiseSIMD *heightNoise = FastNoiseSIMD::NewFastNoiseSIMD();
 
-void Chunk::createAChunkStructure()
-{
-	heightNoise->SetNoiseType(FastNoiseSIMD::NoiseType::Perlin);
-	{
-		float scale = 0.5;
-		heightNoise->SetAxisScales(scale, scale, scale);
-		heightNoise->SetFrequency(0.022);
-		heightNoise->SetFractalOctaves(2);
-	}
-
-	this->clearBlockData();
-
-	int xPadd = position.x * 16;
-	int yPadd = position.y * 16;
-
-
-	float *testNoise
-		= heightNoise->GetSimplexFractalSet(xPadd, 0, yPadd, CHUNK_SIZE, (1), CHUNK_SIZE, 1);
-
-	auto getNoiseVal = [testNoise](int x, int y, int z)
-	{
-		return testNoise[x * CHUNK_SIZE * (1)+y * CHUNK_SIZE + z];
-	};
-
-
-	for (int i = 0; i < 16; i++)
-	{
-		for (int j = 0; j < 16; j++)
-		{
-			int height = 50 + getNoiseVal(i, 0, j) * 30;
-
-			for (int h = 0; h < height; h++)
-			{
-					
-				Block b(BLOCKS::grass);
-				*this->getBlock(i, h, j) = b;
-				
-			}
-
-
-		}
-	}
-
-	FastNoiseSIMD::FreeNoiseSet(testNoise);
-
-}
-
 void Chunk::updateNeighbours()
 {
 	if(chunkInFront)
@@ -224,6 +176,20 @@ void Chunk::removeReferenceToNeighbours()
 
 }
 
+ChunkManager::ChunkManager()
+{
+	heightNoise->SetNoiseType(FastNoiseSIMD::NoiseType::Perlin);
+	{
+		float scale = 1;
+		heightNoise->SetAxisScales(scale, 1, scale);
+		heightNoise->SetFrequency(0.020);
+		heightNoise->SetFractalOctaves(3);
+		heightNoise->SetPerturbFractalOctaves(3);
+
+	}
+
+}
+
 void ChunkManager::setGridSize(int size, glm::ivec2 playerPos)
 {
 	gridSize = size;
@@ -245,8 +211,8 @@ void ChunkManager::setGridSize(int size, glm::ivec2 playerPos)
 			Chunk *c = new Chunk;
 
 			c->position = bottomCorner + glm::ivec2{ x, z };
-			c->createAChunkStructure();
 
+			generateChunk(*c);
 
 			loadedChunks.push_back(c);
 
@@ -329,7 +295,7 @@ void ChunkManager::setPlayerPos(glm::vec2 playerPos)
 
 					loadedChunks[id]->position = newBottomCorner + glm::ivec2{ x, z };
 			
-					loadedChunks[id]->createAChunkStructure();
+					generateChunk(*loadedChunks[id]);
 
 				}
 
@@ -359,6 +325,66 @@ void ChunkManager::setPlayerPos(glm::vec2 playerPos)
 	bottomCorner = newBottomCorner;
 	topCorner = newTopCorner;
 	this->playerPos = playerPos;
+}
+
+void ChunkManager::generateChunk(Chunk &c)
+{
+
+	//this->clearBlockData();
+
+	int xPadd = c.position.x * 16;
+	int yPadd = c.position.y * 16;
+
+
+	float *testNoise
+		= heightNoise->GetSimplexFractalSet(xPadd, 0, yPadd, CHUNK_SIZE, (1), CHUNK_SIZE, 1);
+
+
+	auto getNoiseVal = [testNoise](int x, int y, int z)
+	{
+		return testNoise[x * CHUNK_SIZE * (1) + y * CHUNK_SIZE + z];
+	};
+
+
+	for (int i = 0; i < 16; i++)
+	{
+		for (int j = 0; j < 16; j++)
+		{
+			int height = 50 + getNoiseVal(i, 0, j) * 30;
+
+			for (int h = 0; h < CHUNK_HEIGHT; h++)
+			{
+				if (h < height - 1)
+				{
+					Block b(BLOCKS::stone);
+					*c.getBlock(i, h, j) = b;
+				}
+				else
+				if (h < height)
+				{
+					Block b(BLOCKS::dirt);
+					*c.getBlock(i, h, j) = b;
+				}
+				else
+				if (h == height)
+				{
+					Block b(BLOCKS::grass);
+					*c.getBlock(i, h, j) = b;
+				}
+				else
+				{
+					Block b(BLOCKS::air);
+					*c.getBlock(i, h, j) = b;
+				}
+
+			}
+
+
+		}
+	}
+
+	FastNoiseSIMD::FreeNoiseSet(testNoise);
+
 }
 
 glm::ivec2 ChunkManager::computeBottomCorner(glm::vec2 playerPos, int size)
@@ -397,11 +423,6 @@ glm::ivec2 ChunkManager::getPlayerInChunk(glm::vec2 playerPos)
 
 }
 
-int ChunkManager::getChunkIndex(int x, int z)
-{
-	return x * gridSize + z;
-
-}
 
 void ChunkManager::setNeighbours(std::set<int> &newCreatedChunks, std::set<int> &chunksToRecalculate)
 {

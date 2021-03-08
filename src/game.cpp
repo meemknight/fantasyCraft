@@ -15,14 +15,6 @@ void Game::onCreate(int screenW, int screenH)
 
 	camera.getPosition() = { 0,70,0 };
 
-	c = new Chunk();
-	c2 = new Chunk();
-
-	c->getChunkPosition() = { 0,0 };
-	c2->getChunkPosition() = { 1, 0 };
-
-	c->createAChunkStructure();
-	c2->createAChunkStructure();
 
 	chunkManager.setGridSize(8, glm::vec2{camera.getPosition().x, camera.getPosition().z});
 
@@ -40,7 +32,7 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 	
 	//input
 	{
-		const float speed = 10 * deltaTime;
+		const float speed = 100 * deltaTime;
 		glm::vec3 movePos = {};
 
 
@@ -99,16 +91,7 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 
 	renderer.render(camera, chunkManager);
 	
-	//renderer.render(camera, *c);
-	//renderer.render(camera, *c2);
-	//renderer.render(camera, b, { 0,0,0 });
-	//renderer.render(camera, b, { 1,0,0 });
-	//renderer.render(camera, b, { 0,1,0 });
-	//renderer.render(camera, b, {1,1,0});
-	//renderer.render(camera, b, { 0,0,1 });
-	//renderer.render(camera, b, { 1,0,1 });
-	//renderer.render(camera, b, { 0,1,1 });
-	//renderer.render(camera, b, { 1,1,1 });
+
 
 }
 

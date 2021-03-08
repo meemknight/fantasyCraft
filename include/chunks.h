@@ -5,6 +5,7 @@
 #include <glm/vec3.hpp>
 #include "renderer.h"
 #include <set>
+#include <FastNoiseSIMD.h>
 
 constexpr int CHUNK_SIZE = 16;
 constexpr int CHUNK_HEIGHT = 256;
@@ -37,8 +38,6 @@ public:
 		return glm::ivec2(position) * glm::ivec2(16, 16);
 	}
 
-	void createAChunkStructure();
-
 
 	friend class ChunksRenderer;
 	friend class ChunkManager;
@@ -67,6 +66,8 @@ class ChunkManager
 {
 public:
 	
+	ChunkManager();
+
 	void setGridSize(int size, glm::ivec2 playerPos);
 
 	void setPlayerPos(glm::vec2 playerPos);
@@ -77,6 +78,7 @@ public:
 	//this defines the rect in which the chunk manager is loaded
 	glm::ivec2 bottomCorner;
 	glm::ivec2 topCorner;
+
 
 private:
 
@@ -93,5 +95,9 @@ private:
 	int gridSize;
 	std::vector< Chunk * > loadedChunks;
 	glm::ivec2 playerPos;
+
+	FastNoiseSIMD *heightNoise = FastNoiseSIMD::NewFastNoiseSIMD();
+	
+	void generateChunk(Chunk &c);
 
 };

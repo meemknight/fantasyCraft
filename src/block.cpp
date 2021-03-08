@@ -3,42 +3,54 @@
 glm::ivec2 frontFaces[BLOCKS_COUNT] =
 {
 	{0,0},
-	{3, 15},
+	{3, 15}, //grass
+	{2, 15}, // dirt
+	{1, 15}, //stone
 
 };
 
 glm::ivec2 backFaces[BLOCKS_COUNT] =
 {
 	{0,0},
-	{3, 15},
+	{3, 15}, //grass
+	{2, 15}, // dirt
+	{1, 15}, //stone
 
 };
 
 glm::ivec2 topFaces[BLOCKS_COUNT] =
 {
 	{0,0},
-	{0, 15},
+	{0, 15}, //grass
+	{2, 15}, // dirt
+	{1, 15}, //stone
 
 };
 
 glm::ivec2 bottomFaces[BLOCKS_COUNT] =
 {
 	{0,0},
-	{2, 15},
+	{2, 15}, //grass
+	{2, 15}, // dirt
+	{1, 15}, //stone
 
 };
 
 glm::ivec2 leftFaces[BLOCKS_COUNT] =
 {
 	{0,0},
-	{3, 15},
+	{3, 15}, //grass
+	{2, 15}, // dirt
+	{1, 15}, //stone
 
 };
 
 glm::ivec2 rightFaces[BLOCKS_COUNT] =
 {
 	{0,0},
-	{3, 15},
+	{3, 15}, //grass
+	{2, 15}, // dirt
+	{1, 15}, //stone
 
 };
 
@@ -58,6 +70,9 @@ static const char *blockNames[BLOCKS_COUNT]
 {
 	"air",
 	"grass block"
+	"dirt block",
+	"stone block",
+
 };
 
 const char *Block::getBlockName() const

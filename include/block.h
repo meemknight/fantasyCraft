@@ -6,6 +6,8 @@ enum BLOCKS
 {
 	air, 
 	grass,
+	dirt,
+	stone,
 	BLOCKS_COUNT
 };
 
