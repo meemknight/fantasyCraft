@@ -21,6 +21,8 @@ void Game::onCreate(int screenW, int screenH)
 	std::cout << chunkManager.bottomCorner.x << " " << chunkManager.bottomCorner.y << "\n";
 	std::cout << chunkManager.topCorner.x << " " << chunkManager.topCorner.y << "\n";
 
+	arrowTexture.loadFromFile(RESOURCES_PATH  "arrow.png");
+
 }
 
 void Game::onUpdate(float deltaTime, const GameInput &input)
@@ -70,18 +72,13 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 
 		static int lastMouseX;
 		static int lastMouseY;
-		if(input.getKey(GameInput::RIGHT_CLICK).isHeld())
-		{
-			glm::vec2 delta = input.getMousePos();
-			delta -= glm::vec2(lastMouseX, lastMouseY);
-			camera.rotateCamera(delta * deltaTime);	   
-			lastMouseX = input.getMousePosX();
-			lastMouseY = input.getMousePosY();
-		}else
-		{
-			lastMouseX = input.getMousePosX();
-			lastMouseY = input.getMousePosY();
-		}
+		
+		glm::vec2 delta = input.getMousePos();
+		delta -= glm::vec2(lastMouseX, lastMouseY);
+		camera.rotateCamera(delta * deltaTime);	   
+		lastMouseX = input.getMousePosX();
+		lastMouseY = input.getMousePosY();
+		
 	}
 	
 	//std::cout << "pos: "  <<  camera.getPosition().x << " " << camera.getPosition().z << "\n";
@@ -92,6 +89,13 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 	renderer.render(camera, chunkManager);
 	
 
+	//2d ui stuff
+
+	renderer2d.renderRectangle({ screenW / 2 - 15, screenH / 2 - 15, 30, 30 },
+		{}, {},
+		arrowTexture);
+
+	renderer2d.flush();
 
 }
 

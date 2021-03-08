@@ -19,6 +19,15 @@ GameInput input;
 
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
+
+	if (key == GLFW_KEY_ESCAPE)
+	{
+		if (action == GLFW_PRESS)
+		{
+			
+		}
+	}
+
 	if (key == GLFW_KEY_W)
 	{
 		if(action == GLFW_PRESS)
@@ -30,7 +39,6 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 			input.setKeyRelease(GameInput::FRONT);
 		}
 	}
-
 
 	if (key == GLFW_KEY_A)
 	{
@@ -44,6 +52,7 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 			input.setKeyRelease(GameInput::LEFT);
 		}
 	}
+
 	if (key == GLFW_KEY_S)
 	{
 		if (action == GLFW_PRESS)
@@ -56,6 +65,7 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 			input.setKeyRelease(GameInput::BACK);
 		}
 	}
+
 	if (key == GLFW_KEY_D)
 	{
 		if (action == GLFW_PRESS)
@@ -68,6 +78,7 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 			input.setKeyRelease(GameInput::RIGHT);
 		}
 	}
+
 	if (key == GLFW_KEY_Q)
 	{
 		if (action == GLFW_PRESS)
@@ -80,6 +91,7 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 			input.setKeyRelease(GameInput::DOWN);
 		}
 	}
+
 	if (key == GLFW_KEY_E)
 	{
 		if (action == GLFW_PRESS)
@@ -141,6 +153,12 @@ void windowFocusCallback(GLFWwindow *window, int focused)
 	}
 }
 
+void windowSizeCallback(GLFWwindow *window, int x, int y)
+{
+	
+	input.resetInputsToZero();
+}
+
 int main()
 {
 
@@ -169,6 +187,8 @@ int main()
 	glfwSetKeyCallback(wind, keyCallback);
 	glfwSetMouseButtonCallback(wind, mouseCallback);
 	glfwSetWindowFocusCallback(wind, windowFocusCallback);
+	glfwSetWindowSizeCallback(wind, windowSizeCallback);
+	glfwSetInputMode(wind, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	permaAssertComment(gladLoadGL(), "err initializing glad");
 	

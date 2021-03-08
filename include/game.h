@@ -173,4 +173,6 @@ private:
 
 	ChunkManager chunkManager;
 
+	gl2d::Texture arrowTexture;
+
 };
