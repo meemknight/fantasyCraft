@@ -87,8 +87,6 @@ private:
 
 	glm::ivec2 getPlayerInChunk(glm::vec2 playerPos);
 
-	int getChunkIndex(int x, int z);
-
 	void setNeighbours(std::set<int> &newCreatedChunks, std::set<int> &chunksToRecalculate);
 
 	//this is a grid size x size
