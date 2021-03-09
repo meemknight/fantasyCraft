@@ -6,6 +6,29 @@ class Camera
 public:
 
 	glm::vec3 &getPosition() { return position; }
+
+	glm::ivec3 &getPositionInWorld()
+	{
+		glm::ivec3 p = position;
+
+		if (position.x < 0)
+		{
+			p.x--;
+		}
+
+		if(position.y < 0)
+		{
+			p.y--;
+		}
+
+		if(position.z < 0)
+		{
+			p.z--;
+		}
+
+		return p;
+	}
+
 	glm::vec3 &getViewDirection(){return viewDirection;}
 
 	//full view transform matrix

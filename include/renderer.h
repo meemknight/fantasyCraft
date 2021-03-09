@@ -59,4 +59,5 @@ private:
 
 	std::vector<glm::ivec3> facesVector;
 	std::vector<glm::vec2> uvVector;
+
 };

@@ -16,10 +16,10 @@ void Game::onCreate(int screenW, int screenH)
 	camera.getPosition() = { 0,70,0 };
 
 
-	chunkManager.setGridSize(4, glm::vec2{camera.getPosition().x, camera.getPosition().z});
+	chunkManager.setGridSize(10, glm::vec2{camera.getPosition().x, camera.getPosition().z});
 
-	std::cout << chunkManager.bottomCorner.x << " " << chunkManager.bottomCorner.y << "\n";
-	std::cout << chunkManager.topCorner.x << " " << chunkManager.topCorner.y << "\n";
+	//std::cout << chunkManager.bottomCorner.x << " " << chunkManager.bottomCorner.y << "\n";
+	//std::cout << chunkManager.topCorner.x << " " << chunkManager.topCorner.y << "\n";
 
 	arrowTexture.loadFromFile(RESOURCES_PATH  "arrow.png");
 
@@ -30,11 +30,14 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glDisable(GL_MULTISAMPLE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//glEnable(GL_MULTISAMPLE);
+
 
 	//input
 	{
-		const float speed = 10 * deltaTime;
+		const float speed = 4 * deltaTime;
 		glm::vec3 movePos = {};
 
 
@@ -90,17 +93,47 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 
 	
 	glm::ivec3 rayEnd = {};
-	if(chunkManager.rayCast(rayEnd, camera.getPosition() + 
+	glm::ivec3 blockPlace = {};
+	if(chunkManager.rayCast(rayEnd, blockPlace, camera.getPosition() +
 		glm::vec3{0.5, 0.5, 0.5},
 		camera.getViewDirection()))
 	{
 		auto b = chunkManager.getBlockRaw(rayEnd);
 		if(b)
 		{
-			std::cout << *b << "\n";
+			//std::cout << *b << "\n";
 		}
+
+		if(input.getKey(GameInput::RIGHT_CLICK).isReleased())
+		{
+			chunkManager.placeBlock(blockPlace, ice, camera.getPosition());
+		}
+
+		if (input.getKey(GameInput::LEFT_CLICK).isReleased())
+		{
+			chunkManager.placeBlock(rayEnd, 0, camera.getPosition());
+		}
+
 	}
 	
+	glm::ivec3 curentPosion = camera.getPositionInWorld();
+	
+	if(lastPosition != curentPosion)
+	{
+
+		//todo move this in set player pos
+		glm::ivec2 chunkPos = chunkManager.getPlayerInChunk(glm::vec3(curentPosion));
+		Chunk *currentChunk = chunkManager.getChunk(chunkPos);
+
+		if (currentChunk)
+		{
+			currentChunk->sortTransparentFaces(camera.getPosition());
+			std::cout << "sort\n";
+		}
+
+		lastPosition = curentPosion;
+
+	}
 
 
 

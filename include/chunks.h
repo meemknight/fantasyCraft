@@ -38,6 +38,7 @@ public:
 		return glm::ivec2(position) * glm::ivec2(16, 16);
 	}
 
+	void sortTransparentFaces(glm::vec3 playerPos);
 
 	friend class ChunksRenderer;
 	friend class ChunkManager;
@@ -50,6 +51,9 @@ protected:
 
 	std::vector<glm::ivec3> positions[6];
 	std::vector<glm::ivec2> UVs[6];
+
+	std::vector<glm::ivec3> transparentPositions[6];
+	std::vector<glm::ivec2> transparentUVs[6];
 
 	Block blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_HEIGHT];
 	glm::ivec2 position;
@@ -80,19 +84,25 @@ public:
 	glm::ivec2 topCorner;
 
 
-	bool rayCast(glm::ivec3 &pos , glm::vec3 start, glm::vec3 direction, float maxRaySize = 10);
+	bool rayCast(glm::ivec3 &pos, glm::ivec3 &lastPos, glm::vec3 start, glm::vec3 direction, float maxRaySize = 10);
 
 	Block *getBlockRaw(glm::ivec3 pos, Chunk **c = nullptr);
 
 	//rename todo
 	glm::ivec2 getPlayerInChunk(glm::vec2 playerPos);
+	glm::ivec2 getPlayerInChunk(glm::vec3 playerPos)
+	{
+		return getPlayerInChunk({ playerPos.x, playerPos.z });
+	}
+
+	bool placeBlock(glm::ivec3 pos, Block b, glm::vec3 playerPos);
+
+	Chunk *getChunk(glm::ivec2 pos);
 
 private:
 
 	glm::ivec2 computeBottomCorner(glm::vec2 playerPos, int size);
 	glm::ivec2 computeTopCorner(glm::vec2 playerPos, int size);
-
-
 
 	void setNeighbours(std::set<int> &newCreatedChunks, std::set<int> &chunksToRecalculate);
 

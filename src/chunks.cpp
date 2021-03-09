@@ -13,6 +13,12 @@ void Chunk::calculateFaces()
 
 		positions[i].reserve(200);
 		UVs[i].reserve(200);
+		
+		transparentPositions[i].clear();
+		transparentUVs[i].clear();
+
+		transparentPositions[i].reserve(200);
+		transparentUVs[i].reserve(200);
 
 	}
 
@@ -28,6 +34,7 @@ void Chunk::calculateFaces()
 					continue;
 				}
 
+				
 				//set faces
 				//front
 				if(z >= CHUNK_SIZE - 1)
@@ -35,18 +42,40 @@ void Chunk::calculateFaces()
 					//if there is a chunk
 					if(chunkInFront)
 					{
-						if(chunkInFront->getBlock(x, y, 0)->isTransparent())
+					
+						if(chunkInFront->getBlock(x, y, 0)->isTransparent()
+							&& (!b.isTranslucent() || !chunkInFront->getBlock(x, y, 0)->isTranslucent())
+							)
 						{
-							positions[FRONT].emplace_back(x, y, z);
-							UVs[FRONT].push_back(b.getPositionInAtlas(FRONT));
+							if(b.isTransparent())
+							{
+								transparentPositions[FRONT].emplace_back(x, y, z);
+								transparentUVs[FRONT].push_back(b.getPositionInAtlas(FRONT));
+							}else
+							{
+								positions[FRONT].emplace_back(x, y, z);
+								UVs[FRONT].push_back(b.getPositionInAtlas(FRONT));
+							}
+
 						}
 					}
 					
 				}else
-				if (getBlock(x, y, z + 1)->isTransparent())
+				if (getBlock(x, y, z + 1)->isTransparent()
+					&& (!b.isTranslucent() || !getBlock(x, y, z+1)->isTranslucent())
+					)
 				{
-					positions[FRONT].emplace_back(x, y, z);
-					UVs[FRONT].push_back(b.getPositionInAtlas(FRONT));
+					if (b.isTransparent())
+					{
+						transparentPositions[FRONT].emplace_back(x, y, z);
+						transparentUVs[FRONT].push_back(b.getPositionInAtlas(FRONT));
+					}
+					else
+					{
+						positions[FRONT].emplace_back(x, y, z);
+						UVs[FRONT].push_back(b.getPositionInAtlas(FRONT));
+					}
+
 				}
 
 				//back
@@ -54,32 +83,78 @@ void Chunk::calculateFaces()
 				{
 					if(chunkInBack)
 					{
-						if (chunkInBack->getBlock(x, y, CHUNK_SIZE-1)->isTransparent())
+						if (chunkInBack->getBlock(x, y, CHUNK_SIZE-1)->isTransparent()
+							&& (!b.isTranslucent() || !chunkInBack->getBlock(x, y, CHUNK_SIZE-1)->isTranslucent())
+							)
 						{
-							positions[BACK].emplace_back(x, y, z);
-							UVs[BACK].push_back(b.getPositionInAtlas(BACK));
+							if (b.isTransparent())
+							{
+								transparentPositions[BACK].emplace_back(x, y, z);
+								transparentUVs[BACK].push_back(b.getPositionInAtlas(BACK));
+							}
+							else
+							{
+								positions[BACK].emplace_back(x, y, z);
+								UVs[BACK].push_back(b.getPositionInAtlas(BACK));
+							}
+
+							
 						}
 					}
 
 				}else
-				if (getBlock(x, y, z - 1)->isTransparent())
+				if (getBlock(x, y, z - 1)->isTransparent()
+					&& (!b.isTranslucent() || !getBlock(x, y, z-1)->isTranslucent())
+					)
 				{
-					positions[BACK].emplace_back(x, y, z);
-					UVs[BACK].push_back(b.getPositionInAtlas(BACK));
+					if (b.isTransparent())
+					{
+						transparentPositions[BACK].emplace_back(x, y, z);
+						transparentUVs[BACK].push_back(b.getPositionInAtlas(BACK));
+					}
+					else
+					{
+						positions[BACK].emplace_back(x, y, z);
+						UVs[BACK].push_back(b.getPositionInAtlas(BACK));
+					}
+					
 				}
 
 				//top
-				if (y >= CHUNK_HEIGHT - 1 || getBlock(x, y + 1, z)->isTransparent())
+				if (y >= CHUNK_HEIGHT - 1 || getBlock(x, y + 1, z)->isTransparent()
+					&& (!b.isTranslucent() || !getBlock(x, y+1, z)->isTranslucent())
+					)
 				{
-					positions[TOP].emplace_back(x, y, z);
-					UVs[TOP].push_back(b.getPositionInAtlas(TOP));
+					if (b.isTransparent())
+					{
+						transparentPositions[TOP].emplace_back(x, y, z);
+						transparentUVs[TOP].push_back(b.getPositionInAtlas(TOP));
+					}
+					else
+					{
+						positions[TOP].emplace_back(x, y, z);
+						UVs[TOP].push_back(b.getPositionInAtlas(TOP));
+					}
+
+					
 				}
 
 				//bottom
-				if (y <= 0 || getBlock(x, y - 1, z)->isTransparent())
+				if (y <= 0 || getBlock(x, y - 1, z)->isTransparent()
+					&& (!b.isTranslucent() || !getBlock(x, y-1, z)->isTranslucent())
+					)
 				{
-					positions[BOTTOM].emplace_back(x, y, z);
-					UVs[BOTTOM].push_back(b.getPositionInAtlas(BOTTOM));
+					if (b.isTransparent())
+					{
+						transparentPositions[BOTTOM].emplace_back(x, y, z);
+						transparentUVs[BOTTOM].push_back(b.getPositionInAtlas(BOTTOM));
+					}
+					else
+					{
+						positions[BOTTOM].emplace_back(x, y, z);
+						UVs[BOTTOM].push_back(b.getPositionInAtlas(BOTTOM));
+					}
+					
 				}
 
 				//left
@@ -87,18 +162,42 @@ void Chunk::calculateFaces()
 				{
 					if(chunkAtLeft)
 					{
-						if(chunkAtLeft->getBlock(CHUNK_SIZE-1, y, z)->isTransparent())
+						if(chunkAtLeft->getBlock(CHUNK_SIZE-1, y, z)->isTransparent()
+							&& (!b.isTranslucent() || !chunkAtLeft->getBlock(CHUNK_SIZE-1, y, z)->isTranslucent())
+							)
 						{
-							positions[LEFT].emplace_back(x, y, z);
-							UVs[LEFT].push_back(b.getPositionInAtlas(LEFT));
+							if (b.isTransparent())
+							{
+								transparentPositions[LEFT].emplace_back(x, y, z);
+								transparentUVs[LEFT].push_back(b.getPositionInAtlas(LEFT));
+							}
+							else
+							{
+								positions[LEFT].emplace_back(x, y, z);
+								UVs[LEFT].push_back(b.getPositionInAtlas(LEFT));
+							}
+
 						}
 					}
 
 				}else
-				if (getBlock(x - 1, y, z)->isTransparent())
+				if (getBlock(x - 1, y, z)->isTransparent()
+							&& (!b.isTranslucent() || !getBlock(x - 1, y, z)->isTranslucent())
+					)
 				{
-					positions[LEFT].emplace_back(x, y, z);
-					UVs[LEFT].push_back(b.getPositionInAtlas(LEFT));
+					if (b.isTransparent())
+					{
+
+						transparentPositions[LEFT].emplace_back(x, y, z);
+						transparentUVs[LEFT].push_back(b.getPositionInAtlas(LEFT));
+					}
+					else
+					{
+
+						positions[LEFT].emplace_back(x, y, z);
+						UVs[LEFT].push_back(b.getPositionInAtlas(LEFT));
+					}
+
 				}
 
 				//right
@@ -106,18 +205,42 @@ void Chunk::calculateFaces()
 				{
 					if(chunkAtRight)
 					{
-						if(chunkAtRight->getBlock(0, y, z)->isTransparent())
+						if(chunkAtRight->getBlock(0, y, z)->isTransparent()
+							&& (!b.isTranslucent() || !chunkAtRight->getBlock(0, y, z)->isTranslucent())
+							)
 						{
-							positions[RIGHT].emplace_back(x, y, z);
-							UVs[RIGHT].push_back(b.getPositionInAtlas(RIGHT));
+							if (b.isTransparent())
+							{
+
+								transparentPositions[RIGHT].emplace_back(x, y, z);
+								transparentUVs[RIGHT].push_back(b.getPositionInAtlas(RIGHT));
+							}
+							else
+							{
+
+								positions[RIGHT].emplace_back(x, y, z);
+								UVs[RIGHT].push_back(b.getPositionInAtlas(RIGHT));
+							}
+
 						}
 					}
 
 				}else
-				if (getBlock(x + 1, y, z)->isTransparent())
+				if (getBlock(x + 1, y, z)->isTransparent()
+							&& (!b.isTranslucent() || !getBlock(x + 1, y, z)->isTranslucent())
+					)
 				{
-					positions[RIGHT].emplace_back(x, y, z);
-					UVs[RIGHT].push_back(b.getPositionInAtlas(RIGHT));
+					if (b.isTransparent())
+					{
+						transparentPositions[RIGHT].emplace_back(x, y, z);
+						transparentUVs[RIGHT].push_back(b.getPositionInAtlas(RIGHT));
+					}
+					else
+					{
+						positions[RIGHT].emplace_back(x, y, z);
+						UVs[RIGHT].push_back(b.getPositionInAtlas(RIGHT));
+					}
+					
 				}
 			}
 
@@ -177,6 +300,51 @@ void Chunk::removeReferenceToNeighbours()
 		chunkAtRight = nullptr;
 	}
 
+
+}
+
+void Chunk::sortTransparentFaces(glm::vec3 playerPos)
+{
+	playerPos.x -= this->getChunkPositionx16().x;
+	playerPos.z -= this->getChunkPositionx16().y;
+	//playerPos.z = -playerPos.z;
+
+	std::vector < std::pair< glm::ivec3, glm::ivec2 >> pairVector;
+
+	//todo insert sort mabe
+	for(int face=0; face <6; face++)
+	{
+		pairVector.clear();
+		pairVector.reserve(transparentPositions[face].size());
+
+		for (int i = 0; i < transparentPositions[face].size(); i++)
+		{
+			pairVector.push_back( 
+				std::make_pair(transparentPositions[face][i], transparentUVs[face][i] ) );
+		}
+		
+		//todo make for big distances
+		std::sort(pairVector.begin(), pairVector.end(),
+			[playerPos](std::pair< glm::ivec3, glm::ivec2 > a, std::pair< glm::ivec3, glm::ivec2 > b) 
+			{
+				float distanceA = glm::distance(playerPos, glm::vec3(a.first));
+				float distanceB = glm::distance(playerPos, glm::vec3(b.first));
+
+				return distanceA > distanceB;
+			}
+		);
+
+		transparentPositions[face].clear();
+		transparentUVs[face].clear();
+		
+		for (int i = 0; i < pairVector.size(); i++)
+		{
+			auto a = pairVector[i];
+			transparentPositions[face].push_back(a.first);
+			transparentUVs[face].push_back(a.second);
+		}
+
+	}
 
 }
 
@@ -395,6 +563,21 @@ void ChunkManager::generateChunk(Chunk &c)
 
 }
 
+Chunk *ChunkManager::getChunk(glm::ivec2 pos)
+{
+
+	auto it = std::find_if(loadedChunks.begin(), loadedChunks.end(),
+						[pos](Chunk *c) { return c->getChunkPosition() == pos; }
+	);
+
+	if (it != loadedChunks.end())
+	{
+		return *it;
+	}
+
+	return nullptr;
+}
+
 glm::ivec2 ChunkManager::computeBottomCorner(glm::vec2 playerPos, int size)
 {
 	auto playerInChunk = getPlayerInChunk(playerPos);
@@ -456,9 +639,10 @@ glm::ivec2 ChunkManager::getPlayerInChunk(glm::vec2 playerPos)
 }
 
 
-bool ChunkManager::rayCast(glm::ivec3 &pos, glm::vec3 start, glm::vec3 direction, float maxRaySize)
+bool ChunkManager::rayCast(glm::ivec3 &pos, glm::ivec3 &lastPos, glm::vec3 start, glm::vec3 direction, float maxRaySize)
 {
 	pos = {0,0,0};
+	lastPos = { 0,0,0 };
 
 	glm::vec3 p = start;
 
@@ -474,6 +658,10 @@ bool ChunkManager::rayCast(glm::ivec3 &pos, glm::vec3 start, glm::vec3 direction
 		if (p.x < 0) { blockPos.x--; }
 		if (p.z < 0) { blockPos.z--; }
 
+		lastPos = pos;
+		pos = blockPos;
+		
+
 		auto b = getBlockRaw(blockPos);
 
 		if(b==nullptr)
@@ -483,7 +671,6 @@ bool ChunkManager::rayCast(glm::ivec3 &pos, glm::vec3 start, glm::vec3 direction
 
 		if(b->getType() != air)
 		{
-			pos = blockPos;
 
 			return 1;
 		}
@@ -541,6 +728,50 @@ Block *ChunkManager::getBlockRaw(glm::ivec3 pos, Chunk **c)
 	}
 
 	return nullptr;
+}
+
+bool ChunkManager::placeBlock(glm::ivec3 pos, Block b, glm::vec3 playerPos)
+{
+	Chunk *c = 0;
+	Block *blockPtr = getBlockRaw(pos, &c);
+
+	if(blockPtr != nullptr)
+	{
+		
+		*blockPtr = b;
+
+		if(c->chunkAtLeft)
+		{
+			c->chunkAtLeft->calculateFaces();
+		}
+
+		if (c->chunkAtRight)
+		{
+			c->chunkAtRight->calculateFaces();
+		}
+
+		if (c->chunkInFront)
+		{
+			c->chunkInFront->calculateFaces();
+		}
+
+		if (c->chunkInBack)
+		{
+			c->chunkInBack->calculateFaces();
+		}
+
+		c->calculateFaces();
+		c->sortTransparentFaces(playerPos);
+
+		return 1;
+	}else
+	{
+	
+		return 0;
+	}
+
+
+
 }
 
 void ChunkManager::setNeighbours(std::set<int> &newCreatedChunks, std::set<int> &chunksToRecalculate)

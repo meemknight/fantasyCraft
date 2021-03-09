@@ -164,9 +164,6 @@ private:
 	gl2d::Font font;
 	int screenW, screenH;
 
-	Chunk *c;
-	Chunk *c2;
-
 	FirstPersonFlyCamera camera;
 
 	ChunksRenderer renderer;
@@ -174,5 +171,7 @@ private:
 	ChunkManager chunkManager;
 
 	gl2d::Texture arrowTexture;
+
+	glm::ivec3 lastPosition = {};
 
 };

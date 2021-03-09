@@ -8,6 +8,7 @@ enum BLOCKS
 	grass,
 	dirt,
 	stone,
+	ice,
 	BLOCKS_COUNT
 };
 
@@ -27,9 +28,19 @@ public:
 		return !isOpaque();
 	}
 
+	bool isTranslucent() const
+	{
+		if(type == ice)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
 	bool isOpaque() const
 	{
-		if(type == air)
+		if(type == air || type == ice)
 		{
 			return false;
 		}
