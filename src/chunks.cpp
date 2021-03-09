@@ -415,22 +415,133 @@ glm::ivec2 ChunkManager::computeTopCorner(glm::vec2 playerPos, int size)
 
 glm::ivec2 ChunkManager::getPlayerInChunk(glm::vec2 playerPos)
 {
-	glm::ivec2 playerInChunk = glm::ivec2( playerPos.x / 16, playerPos.y / 16);
 
+	//glm::ivec2 playerInChunk = glm::ivec2(playerPos.x / 16, playerPos.y / 16);
+	//
+	//if (playerPos.x < 0)
+	//{
+	//	playerInChunk.x--;
+	//}
+	//
+	//if (playerPos.y < 0)
+	//{
+	//	playerInChunk.y--;
+	//}
+	//
+	//return playerInChunk;
+	
+
+	glm::ivec2 playerInChunk;
+	
 	if (playerPos.x < 0)
 	{
+		playerInChunk.x = (playerPos.x+0.001) / 16;
 		playerInChunk.x--;
+	}else
+	{
+		playerInChunk.x = playerPos.x / 16;
 	}
-
+	
 	if (playerPos.y < 0)
 	{
+		playerInChunk.y = (playerPos.y + 0.001) / 16;
 		playerInChunk.y--;
+	}else
+	{
+		playerInChunk.y = playerPos.y / 16;
 	}
-
+	
 	return playerInChunk;
 
 }
 
+
+bool ChunkManager::rayCast(glm::ivec3 &pos, glm::vec3 start, glm::vec3 direction, float maxRaySize)
+{
+	pos = {0,0,0};
+
+	glm::vec3 p = start;
+
+	direction = glm::normalize(direction);
+	direction *= 0.1;
+
+	for (float moveSoFar = 0; moveSoFar <= maxRaySize; moveSoFar += 0.1)
+	{
+		if (p.y < 0) { return 0; }
+		if (p.y >= CHUNK_HEIGHT) { return 0; }
+
+		glm::ivec3 blockPos = p;
+		if (p.x < 0) { blockPos.x--; }
+		if (p.z < 0) { blockPos.z--; }
+
+		auto b = getBlockRaw(blockPos);
+
+		if(b==nullptr)
+		{
+			return 0;
+		}
+
+		if(b->getType() != air)
+		{
+			pos = blockPos;
+
+			return 1;
+		}
+
+		p += direction;
+	}
+
+	return 0;
+}
+
+Block *ChunkManager::getBlockRaw(glm::ivec3 pos, Chunk **c)
+{
+	if (c)
+	{
+		*c = nullptr;
+	}
+
+
+	glm::ivec2 chunkPos = getPlayerInChunk({pos.x, pos.z});
+
+	auto it = std::find_if(loadedChunks.begin(), loadedChunks.end(),
+					[pos = chunkPos ](Chunk *c) { return c->getChunkPosition() == pos; }
+	);
+
+	if (it != loadedChunks.end())
+	{
+		glm::ivec3 blockPos = pos;
+
+		if(pos.x < 0)
+		{
+			blockPos.x -= chunkPos.x * CHUNK_SIZE;
+			//blockPos.x = CHUNK_SIZE - blockPos.x;
+		}else
+		{
+			blockPos.x -= chunkPos.x * CHUNK_SIZE;
+		}
+
+		if(pos.z < 0)
+		{
+			blockPos.z -= chunkPos.y * CHUNK_SIZE;
+			//blockPos.z = CHUNK_SIZE  - blockPos.z;
+		}else
+		{
+			blockPos.z -= chunkPos.y * CHUNK_SIZE;
+		}
+
+
+		if(c)
+		{
+			*c = *it;
+		}
+
+		return (*it)->getBlock(blockPos.x, blockPos.y, blockPos.z);
+
+	}
+
+	return nullptr;
+}
 
 void ChunkManager::setNeighbours(std::set<int> &newCreatedChunks, std::set<int> &chunksToRecalculate)
 {

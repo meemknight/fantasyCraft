@@ -66,13 +66,13 @@ glm::ivec2 Block::getPositionInAtlas(int face)
 }
 
 
-static const char *blockNames[BLOCKS_COUNT]
+static const char *blockNames[BLOCKS_COUNT + 1]
 {
 	"air",
-	"grass block"
+	"grass block",
 	"dirt block",
 	"stone block",
-
+	""
 };
 
 const char *Block::getBlockName() const

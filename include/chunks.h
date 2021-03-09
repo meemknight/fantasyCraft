@@ -80,12 +80,19 @@ public:
 	glm::ivec2 topCorner;
 
 
+	bool rayCast(glm::ivec3 &pos , glm::vec3 start, glm::vec3 direction, float maxRaySize = 10);
+
+	Block *getBlockRaw(glm::ivec3 pos, Chunk **c = nullptr);
+
+	//rename todo
+	glm::ivec2 getPlayerInChunk(glm::vec2 playerPos);
+
 private:
 
 	glm::ivec2 computeBottomCorner(glm::vec2 playerPos, int size);
 	glm::ivec2 computeTopCorner(glm::vec2 playerPos, int size);
 
-	glm::ivec2 getPlayerInChunk(glm::vec2 playerPos);
+
 
 	void setNeighbours(std::set<int> &newCreatedChunks, std::set<int> &chunksToRecalculate);
 

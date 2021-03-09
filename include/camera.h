@@ -5,7 +5,8 @@ class Camera
 {
 public:
 
-	glm::vec3 &getPosition(){return position;}
+	glm::vec3 &getPosition() { return position; }
+	glm::vec3 &getViewDirection(){return viewDirection;}
 
 	//full view transform matrix
 	glm::mat4 getProjectionViewMatrix(); 
@@ -25,6 +26,7 @@ public:
 	}
 
 	virtual void move(glm::vec3 direction) { position += direction; }
+
 
 protected:
 

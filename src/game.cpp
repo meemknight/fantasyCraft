@@ -16,7 +16,7 @@ void Game::onCreate(int screenW, int screenH)
 	camera.getPosition() = { 0,70,0 };
 
 
-	chunkManager.setGridSize(16, glm::vec2{camera.getPosition().x, camera.getPosition().z});
+	chunkManager.setGridSize(4, glm::vec2{camera.getPosition().x, camera.getPosition().z});
 
 	std::cout << chunkManager.bottomCorner.x << " " << chunkManager.bottomCorner.y << "\n";
 	std::cout << chunkManager.topCorner.x << " " << chunkManager.topCorner.y << "\n";
@@ -31,10 +31,10 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 	glEnable(GL_CULL_FACE);
 	glDisable(GL_MULTISAMPLE);
 	//glEnable(GL_MULTISAMPLE);
-	
+
 	//input
 	{
-		const float speed = 100 * deltaTime;
+		const float speed = 10 * deltaTime;
 		glm::vec3 movePos = {};
 
 
@@ -72,22 +72,40 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 
 		static int lastMouseX;
 		static int lastMouseY;
-		
+
 		glm::vec2 delta = input.getMousePos();
 		delta -= glm::vec2(lastMouseX, lastMouseY);
-		camera.rotateCamera(delta * deltaTime);	   
+		camera.rotateCamera(delta * deltaTime);
 		lastMouseX = input.getMousePosX();
 		lastMouseY = input.getMousePosY();
-		
+
 	}
+
+	//std::cout << "pos: " << camera.getPosition().x << " " << camera.getPosition().z << " -- chunk"
+	//	<< chunkManager.getPlayerInChunk({camera.getPosition().x, camera.getPosition().z}).x
+	//	<< " " << chunkManager.getPlayerInChunk({ camera.getPosition().x, camera.getPosition().z }).y << "\n";
 	
-	//std::cout << "pos: "  <<  camera.getPosition().x << " " << camera.getPosition().z << "\n";
+	
 	chunkManager.setPlayerPos(glm::vec2{ camera.getPosition().x, camera.getPosition().z });
 
-	Block b(BLOCKS::grass);
+	
+	glm::ivec3 rayEnd = {};
+	if(chunkManager.rayCast(rayEnd, camera.getPosition() + 
+		glm::vec3{0.5, 0.5, 0.5},
+		camera.getViewDirection()))
+	{
+		auto b = chunkManager.getBlockRaw(rayEnd);
+		if(b)
+		{
+			std::cout << *b << "\n";
+		}
+	}
+	
+
+
 
 	renderer.render(camera, chunkManager);
-	
+
 
 	//2d ui stuff
 

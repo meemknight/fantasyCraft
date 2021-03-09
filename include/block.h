@@ -4,7 +4,7 @@
 
 enum BLOCKS
 {
-	air, 
+	air = 0, 
 	grass,
 	dirt,
 	stone,
