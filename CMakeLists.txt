@@ -3,6 +3,8 @@
 cmake_minimum_required(VERSION 3.13)
 project(fantasyCraft)
 
+set(CMAKE_CXX_FLAGS "-mavx2")
+
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -13,7 +15,6 @@ add_subdirectory(thirdparty/stb_image)
 add_subdirectory(thirdparty/stb_truetype)
 add_subdirectory(thirdparty/gl2d)
 add_subdirectory(thirdparty/FastNoiseSIMD)
-
 
 
 # Define MY_SOURCES to be a list of all the source files for my game 

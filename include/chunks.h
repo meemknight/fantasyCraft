@@ -33,7 +33,7 @@ public:
 		return position;
 	}
 
-	glm::ivec2 &getChunkPositionx16()
+	glm::ivec2 getChunkPositionx16()
 	{
 		return glm::ivec2(position) * glm::ivec2(16, 16);
 	}
