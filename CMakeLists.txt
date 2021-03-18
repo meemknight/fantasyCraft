@@ -2,8 +2,9 @@
 
 cmake_minimum_required(VERSION 3.13)
 project(fantasyCraft)
-
-set(CMAKE_CXX_FLAGS "-mavx2")
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+	set(CMAKE_CXX_FLAGS "-mavx2")
+endif()
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
