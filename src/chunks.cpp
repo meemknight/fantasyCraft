@@ -351,7 +351,7 @@ ChunkManager::ChunkManager()
 	{
 		float scale = 1;
 		heightNoise->SetAxisScales(scale, 1, scale);
-		heightNoise->SetFrequency(0.020);
+		heightNoise->SetFrequency(0.020f);
 		heightNoise->SetFractalOctaves(3);
 		heightNoise->SetPerturbFractalOctaves(3);
 

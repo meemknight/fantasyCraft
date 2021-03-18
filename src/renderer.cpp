@@ -1,4 +1,4 @@
-#include "..\include\renderer.h"
+#include "renderer.h"
 
 void ChunksRenderer::init()
 {
@@ -333,7 +333,7 @@ void ChunksRenderer::render(Camera c, ChunkManager &chunkManager)
 		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * uvVector.size(),
 			uvVector.data(), GL_STREAM_DRAW);
 
-		glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, facesVector.size());
+		glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, (GLsizei)facesVector.size());
 
 	}
 	

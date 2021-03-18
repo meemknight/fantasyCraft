@@ -7,7 +7,7 @@ public:
 
 	glm::vec3 &getPosition() { return position; }
 
-	glm::ivec3 &getPositionInWorld()
+	glm::ivec3 getPositionInWorld()
 	{
 		glm::ivec3 p = position;
 
@@ -58,8 +58,8 @@ protected:
 	glm::vec3 viewDirection = { 0,0,-1 };
 
 	float fovRadians = glm::radians(100.f);
-	float closePlane = 0.1;
-	float farPlane = 100;
+	float closePlane = 0.1f;
+	float farPlane = 100.f;
 	float aspectRatio = 1.f;
 
 };
