@@ -437,7 +437,7 @@ void main()
 		{
 			char c[256] = { 0 };
 			strcat(c, "error openning: ");
-			strcat_s(c + strlen(c), 200, file);
+			strcat(c + strlen(c), file);
 			errorFunc(c);
 			return;
 		}
@@ -1533,8 +1533,8 @@ void main()
 		if (!file.is_open())
 		{
 			char c[256] = { 0 };
-			strcat_s(c, "error openning: ");
-			strcat_s(c + strlen(c), 200, fileName);
+			strcat(c, "error openning: ");
+			strcat(c + strlen(c), fileName);
 			errorFunc(c);
 			return;
 		}
@@ -1560,8 +1560,8 @@ void main()
 		if (!file.is_open())
 		{
 			char c[256] = { 0 };
-			strcat_s(c, "error openning: ");
-			strcat_s(c + strlen(c), 200, fileName);
+			strcat(c, "error openning: ");
+			strcat(c + strlen(c), fileName);
 			errorFunc(c);
 			return;
 		}
