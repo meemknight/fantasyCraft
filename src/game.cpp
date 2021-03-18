@@ -116,25 +116,6 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 
 	}
 	
-	glm::ivec3 curentPosion = camera.getPositionInWorld();
-	
-	if(lastPosition != curentPosion)
-	{
-
-		//todo move this in set player pos
-		glm::ivec2 chunkPos = chunkManager.getPlayerInChunk(glm::vec3(curentPosion));
-		Chunk *currentChunk = chunkManager.getChunk(chunkPos);
-
-		if (currentChunk)
-		{
-			currentChunk->sortTransparentFaces(camera.getPosition());
-			std::cout << "sort\n";
-		}
-
-		lastPosition = curentPosion;
-
-	}
-
 
 
 	renderer.render(camera, chunkManager);

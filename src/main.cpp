@@ -210,7 +210,7 @@ int main()
 
 	#pragma region movement
 		long newTime = clock();
-		float deltaTime = (float)(newTime - lastTime) / 1000.f;
+		float deltaTime = (float)(newTime - lastTime) / CLOCKS_PER_SEC;
 		lastTime = clock();
 	#pragma endregion
 

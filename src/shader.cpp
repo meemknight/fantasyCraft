@@ -92,7 +92,7 @@ std::string Shader::loadShaderSource(std::string source)
 	}
 
 	//most vexing parse here yay love cpp
-	std::string ret{ std::istreambuf_iterator<char>(f), std::istreambuf_iterator<char>() };
+	std::string ret{ std::istreambuf_iterator<char>(f), {} };
 
 	return std::move(ret);
 }

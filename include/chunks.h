@@ -1,7 +1,7 @@
 #pragma once
 #include "block.h"
 #include <vector>
-#include <string.h>
+#include <cstring>
 #include <glm/vec3.hpp>
 #include "renderer.h"
 #include <set>

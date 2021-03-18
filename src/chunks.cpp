@@ -247,9 +247,6 @@ void Chunk::calculateFaces()
 }
 
 
-//todo move
-static FastNoiseSIMD *heightNoise = FastNoiseSIMD::NewFastNoiseSIMD();
-
 void Chunk::updateNeighbours()
 {
 	if(chunkInFront)
@@ -406,6 +403,9 @@ void ChunkManager::setGridSize(int size, glm::ivec2 playerPos)
 
 void ChunkManager::setPlayerPos(glm::vec2 playerPos)
 {
+
+
+
 	auto newBottomCorner = computeBottomCorner(playerPos, gridSize);
 	auto newTopCorner = computeTopCorner(playerPos, gridSize);
 
@@ -616,9 +616,11 @@ glm::ivec2 ChunkManager::getPlayerInChunk(glm::vec2 playerPos)
 
 	glm::ivec2 playerInChunk;
 	
+	constexpr float MARGIN = 0.001;
+
 	if (playerPos.x < 0)
 	{
-		playerInChunk.x = (playerPos.x+0.001) / 16;
+		playerInChunk.x = (playerPos.x+ MARGIN) / 16;
 		playerInChunk.x--;
 	}else
 	{
@@ -627,7 +629,7 @@ glm::ivec2 ChunkManager::getPlayerInChunk(glm::vec2 playerPos)
 	
 	if (playerPos.y < 0)
 	{
-		playerInChunk.y = (playerPos.y + 0.001) / 16;
+		playerInChunk.y = (playerPos.y + MARGIN) / 16;
 		playerInChunk.y--;
 	}else
 	{
@@ -743,21 +745,25 @@ bool ChunkManager::placeBlock(glm::ivec3 pos, Block b, glm::vec3 playerPos)
 		if(c->chunkAtLeft)
 		{
 			c->chunkAtLeft->calculateFaces();
+			c->chunkAtLeft->sortTransparentFaces(playerPos);
 		}
 
 		if (c->chunkAtRight)
 		{
 			c->chunkAtRight->calculateFaces();
+			c->chunkAtRight->sortTransparentFaces(playerPos);
 		}
 
 		if (c->chunkInFront)
 		{
 			c->chunkInFront->calculateFaces();
+			c->chunkInFront->sortTransparentFaces(playerPos);
 		}
 
 		if (c->chunkInBack)
 		{
 			c->chunkInBack->calculateFaces();
+			c->chunkInBack->sortTransparentFaces(playerPos);
 		}
 
 		c->calculateFaces();

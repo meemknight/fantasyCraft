@@ -210,6 +210,29 @@ void ChunksRenderer::render(Camera c, Chunk &chunk)
 
 void ChunksRenderer::render(Camera c, ChunkManager &chunkManager)
 {
+	//resort chunks and stuff
+	glm::ivec3 curentPosion = c.getPositionInWorld();
+
+	if (lastPosition != curentPosion)
+	{
+
+		//todo move this in set player pos
+		glm::ivec2 chunkPos = chunkManager.getPlayerInChunk(glm::vec3(curentPosion));
+		Chunk *currentChunk = chunkManager.getChunk(chunkPos);
+
+		if (currentChunk)
+		{
+			currentChunk->sortTransparentFaces(c.getPosition());
+		}
+
+		lastPosition = curentPosion;
+
+	}
+
+
+	//
+
+
 	shader.bind();
 	texture.bind(0);
 	shader.setProjectionMatrix(c.getProjectionMatrix());

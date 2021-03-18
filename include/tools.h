@@ -6,9 +6,9 @@
 							//closes
 
 
-#include <signal.h>
-#include <string.h>
-#include <stdio.h>
+#include <csignal>
+#include <cstring>
+#include <cstdio>
 
 #define _CRT_SECURE_NO_WARNINGS 
 

@@ -8,48 +8,49 @@
 #include <texture.h>
 #include "renderer.h"
 
-class GameInput;
-
-class Button
-{
-public:
-
-	bool isPressed() { return pressed; };
-	bool isHeld() { return held; }
-	bool isReleased() { return released; }
-
-	void setPress()
-	{
-		pressed = true;
-		held = true;
-	}
-
-	void setRelease()
-	{
-		released = true;
-		held = false;
-	}
-
-	
-private:
-	
-	friend GameInput;
-
-	bool held = 0;
-	bool pressed = 0;
-	bool released = 0;
-
-	void resetInput()
-	{
-		released = 0;
-		pressed = 0;
-	}
-};
-
 
 class GameInput
 {
 public:
+
+	class Button
+	{
+	public:
+
+		bool isPressed() { return pressed; };
+		bool isHeld() { return held; }
+		bool isReleased() { return released; }
+
+
+
+	private:
+
+		friend GameInput;
+
+		bool held = 0;
+		bool pressed = 0;
+		bool released = 0;
+
+		void setPress()
+		{
+			pressed = true;
+			held = true;
+		}
+
+		void setRelease()
+		{
+			released = true;
+			held = false;
+		}
+
+
+		void resetInput()
+		{
+			released = 0;
+			pressed = 0;
+		}
+	};
+
 	enum keys 
 	{
 		FRONT, 
@@ -172,6 +173,5 @@ private:
 
 	gl2d::Texture arrowTexture;
 
-	glm::ivec3 lastPosition = {};
 
 };
