@@ -1,9 +1,9 @@
 #version 330 core
 
-in layout(location = 0) vec3 pos;
-in layout(location = 1) vec2 uv;
-in layout(location = 2) ivec3 blockPos;
-in layout(location = 3) vec2 atlasUV;
+layout(location = 0) in vec3 pos;
+layout(location = 1) in vec2 uv;
+layout(location = 2) in ivec3 blockPos;
+layout(location = 3) in vec2 atlasUV;
 
 uniform vec3 u_playerPos;
 uniform mat4 u_modelView;

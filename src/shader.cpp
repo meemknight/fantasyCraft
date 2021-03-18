@@ -35,7 +35,7 @@ void Shader::loadFromFiles(std::string vertexPath, std::string fragmentPath)
 
 		glGetProgramInfoLog(id, l, &l, message);
 
-		std::cout << message << "\n";
+		std::cout << message << "\n" << "in: " << vertexPath << " and: " << fragmentPath << "\n";
 
 		delete[] message;
 	}
@@ -61,8 +61,8 @@ GLuint Shader::createShaderFromMemory(const char *data, GLenum type)
 		int   l = 0;
 
 		glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &l);
-		
-		if(l)
+
+		if (l)
 		{
 
 			message = new char[l];
@@ -71,12 +71,12 @@ GLuint Shader::createShaderFromMemory(const char *data, GLenum type)
 
 			message[l - 1] = 0;
 
-			std::cout << message << "\n";
+			std::cout << message << "\n" << "data:\n\n" << data << "\n\n";
 
 			delete[] message;
 
 		}
-		
+
 	}
 
 	return shaderID;
@@ -86,7 +86,7 @@ std::string Shader::loadShaderSource(std::string source)
 {
 	std::ifstream f(source);
 
-	if(!f.is_open())
+	if (!f.is_open())
 	{
 		std::cout << "err loading " << source << "\n";
 	}
@@ -111,7 +111,7 @@ void DrawBlocksShader::load()
 	u_atlas = glGetUniformLocation(id, "u_atlas");
 
 
-	if(u_projectionMatrix == -1)
+	if (u_projectionMatrix == -1)
 	{
 		std::cout << "projMat error\n";
 	}
