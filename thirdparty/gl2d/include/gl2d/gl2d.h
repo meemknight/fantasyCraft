@@ -44,7 +44,7 @@
 #include <stb_truetype/stb_truetype.h>
 
 #ifdef _MSC_VER
-#pragma warning( disable : 4244 4305 4267 4996)
+	#pragma warning( disable : 4244 4305 4267 4996)
 #endif
 
 namespace gl2d

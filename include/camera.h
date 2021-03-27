@@ -29,7 +29,7 @@ public:
 		return p;
 	}
 
-	glm::vec3 &getViewDirection(){return viewDirection;}
+	glm::vec3 getViewDirection();
 
 	//full view transform matrix
 	glm::mat4 getProjectionViewMatrix(); 
@@ -55,7 +55,8 @@ protected:
 
 	glm::vec3 position = {};
 	glm::vec3 upVector = { 0,1,0 };
-	glm::vec3 viewDirection = { 0,0,-1 };
+
+	glm::vec2 viewAngle = {};
 
 	float fovRadians = glm::radians(100.f);
 	float closePlane = 0.1f;

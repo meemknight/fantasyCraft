@@ -12,7 +12,7 @@ glm::mat4 Camera::getProjectionViewMatrix()
 
 glm::mat4 Camera::getViewMatrix()
 {
-	return glm::lookAt({0,0,0}, viewDirection, upVector);
+	return glm::lookAt({0,0,0}, getViewDirection(), upVector);
 }
 
 glm::mat4 Camera::getProjectionMatrix()
@@ -21,37 +21,41 @@ glm::mat4 Camera::getProjectionMatrix()
 		aspectRatio, closePlane, farPlane);
 }
 
-//https://github.com/meemknight/minecraftGl/blob/5f7334e682765350c726bf9c8abbd333104fe9cb/minecraftGl/Camera.cpp#L150
-void Camera::rotateCamera(float x, float y)
+glm::vec3 Camera::getViewDirection()
 {
-	x *= -1;
-	y *= -1;
+	glm::vec3 viewDirection = {0,0,-1};
 
-	float speed = 10;
+	//now we rotate by y vector
+	viewDirection = glm::mat3(glm::rotate(viewAngle.x, upVector)) * viewDirection;
 
 	glm::vec3 vectorToTheRight = glm::cross(viewDirection, upVector);
 
-	glm::vec3 oldPos = viewDirection;
+	//now we rotate by x vector
+	viewDirection = glm::mat3(glm::rotate(viewAngle.y, vectorToTheRight)) * viewDirection;
 
-
-	//now we rotate by y vector
-	viewDirection = glm::mat3(glm::rotate(glm::radians(x * speed), upVector)) * viewDirection;
-	
-	auto isPositive = [](float n){return n >= 0;};
-	glm::vec3 tiltTest = glm::mat3(glm::rotate(glm::radians(x * speed), vectorToTheRight)) * viewDirection;
-	
-	//first check if we are not already looking all the way up or down
-	if (isPositive(oldPos.x) == !isPositive(tiltTest.x) &&
-		isPositive(oldPos.z) == !isPositive(tiltTest.z))
-	{
-		
-	}
-	else
-	{
-		viewDirection = glm::mat3(glm::rotate(glm::radians(y * speed), vectorToTheRight)) * viewDirection;
-	}
 
 	viewDirection = glm::normalize(viewDirection);
+
+	return viewDirection;
+}
+
+void Camera::rotateCamera(float x, float y)
+{
+	if(!x && !y)
+	{
+		return;
+	}
+
+	x *= -1;
+	y *= -1;
+
+	//float speed = glm::radians(10.f);
+	float speed = 0.10;
+	
+	viewAngle += glm::vec2{x, y} *speed;
+
+	viewAngle.y = glm::clamp(viewAngle.y, glm::radians(-89.f), glm::radians(89.f));
+
 }
 
 void FirstPersonFlyCamera::move(glm::vec3 direction)
@@ -64,7 +68,7 @@ void FirstPersonFlyCamera::move(glm::vec3 direction)
 
 	if (direction.x || direction.z)
 	{
-		glm::vec3 v = viewDirection;
+		glm::vec3 v = getViewDirection();
 		v.y = 0;
 		m -= glm::normalize(v) * direction.z;
 		m += glm::normalize(glm::cross(v, glm::vec3{ 0,1,0 })) * direction.x;
