@@ -114,6 +114,7 @@ void SkyBox::render(const glm::mat4 &viewProjection)
 {
 
 	glDepthFunc(GL_LEQUAL);
+	//glDepthMask(GL_FALSE);
 	glBindVertexArray(vao);
 	shader.bind();
 	
@@ -126,6 +127,7 @@ void SkyBox::render(const glm::mat4 &viewProjection)
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	glBindVertexArray(0);
+	//glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);
 
 }

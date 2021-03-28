@@ -208,7 +208,7 @@ void ChunksRenderer::render(Camera c, Chunk &chunk)
 
 }
 
-void ChunksRenderer::render(Camera c, ChunkManager &chunkManager)
+void ChunksRenderer::render(Camera c, ChunkManager &chunkManager, SkyBox &skyBox)
 {
 	//resort chunks and stuff
 	glm::ivec3 curentPosion = c.getPositionInWorld();
@@ -289,6 +289,17 @@ void ChunksRenderer::render(Camera c, ChunkManager &chunkManager)
 		glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, facesVector.size());
 
 	}
+
+	glm::mat4 centeredView = glm::mat4(glm::mat3(c.getViewMatrix()));
+	skyBox.render(c.getProjectionMatrix() * centeredView);
+
+	shader.bind();
+	texture.bind(0);
+	shader.setProjectionMatrix(c.getProjectionMatrix());
+
+	shader.setPlayerPos({ playerPos.x, playerPos.y, playerPos.z });
+
+	shader.setModelViewMatrix(c.getViewMatrix());
 
 	for (int face = 0; face < 6; face++)
 	{

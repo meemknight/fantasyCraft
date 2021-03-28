@@ -131,9 +131,8 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 	
 
 
-	renderer.render(camera, chunkManager);
+	renderer.render(camera, chunkManager, skyBox);
 
-	skyBox.render(camera.getProjectionViewMatrix());
 
 	//2d ui stuff
 
