@@ -23,6 +23,19 @@ void Game::onCreate(int screenW, int screenH)
 
 	arrowTexture.loadFromFile(RESOURCES_PATH  "arrow.png");
 
+	skyBox.create();
+
+	const char* faces[6] = 
+		{
+			RESOURCES_PATH "right.jpg",
+			RESOURCES_PATH "left.jpg",
+			RESOURCES_PATH "top.jpg",
+			RESOURCES_PATH "bottom.jpg",
+			RESOURCES_PATH "front.jpg",
+			RESOURCES_PATH "back.jpg"
+		};
+
+	skyBox.loadTextures(faces);
 }
 
 void Game::onUpdate(float deltaTime, const GameInput &input)
@@ -120,6 +133,7 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 
 	renderer.render(camera, chunkManager);
 
+	skyBox.render(camera.getProjectionViewMatrix());
 
 	//2d ui stuff
 

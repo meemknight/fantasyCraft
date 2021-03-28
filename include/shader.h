@@ -22,6 +22,8 @@ public:
 		glDeleteProgram(id);
 	}
 
+	GLuint getId() { return id; }
+
 protected:
 
 	GLuint id = 0;

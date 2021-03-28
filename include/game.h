@@ -7,6 +7,7 @@
 #include "glm/vec2.hpp"
 #include <texture.h>
 #include "renderer.h"
+#include "skyBox.h"
 
 
 class GameInput
@@ -173,5 +174,6 @@ private:
 
 	gl2d::Texture arrowTexture;
 
+	SkyBox skyBox;
 
 };
