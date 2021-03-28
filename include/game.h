@@ -62,6 +62,7 @@ public:
 		RIGHT_CLICK,
 		DOWN,
 		UP,
+		C,
 		BUTTONS_COUNT
 	};
 
@@ -166,7 +167,8 @@ private:
 	gl2d::Font font;
 	int screenW, screenH;
 
-	FirstPersonFlyCamera camera;
+	Camera *camera = 0;
+	bool isCreativeCamera = 0;
 
 	ChunksRenderer renderer;
 

@@ -6,6 +6,9 @@
 void Game::onCreate(int screenW, int screenH)
 {
 
+	camera = new CreativeModeCamera();
+	isCreativeCamera = true;
+
 	updateWindowMetrics(screenW, screenH);
 
 	//create 2D renderer
@@ -13,10 +16,10 @@ void Game::onCreate(int screenW, int screenH)
 
 	font.createFromFile(RESOURCES_PATH "roboto_black.ttf");
 
-	camera.getPosition() = { 0,70,0 };
+	camera->getPosition() = { 0,70,0 };
 
 
-	chunkManager.setGridSize(10, glm::vec2{camera.getPosition().x, camera.getPosition().z});
+	chunkManager.setGridSize(10, glm::vec2{camera->getPosition().x, camera->getPosition().z});
 
 	//std::cout << chunkManager.bottomCorner.x << " " << chunkManager.bottomCorner.y << "\n";
 	//std::cout << chunkManager.topCorner.x << " " << chunkManager.topCorner.y << "\n";
@@ -53,9 +56,29 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 
 	//input
 	{
-		const float speed = 4 * deltaTime;
-		glm::vec3 movePos = {};
+		if(input.getKey(GameInput::C).isReleased())
+		{
+			if(isCreativeCamera)
+			{
+				Camera *c = new FlyCamera();
+				*c = *camera;
+				delete camera;
+				camera = c;
+			}
+			else
+			{
+				Camera *c = new CreativeModeCamera();
+				*c = *camera;
+				delete camera;
+				camera = c;
+			}
 
+			isCreativeCamera = !isCreativeCamera;
+		}
+
+
+		const float speed = 16 * deltaTime;
+		glm::vec3 movePos = {};
 
 
 		if (input.getKey(GameInput::LEFT).isHeld())
@@ -87,14 +110,14 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 		{
 			movePos.y += speed;
 		}
-		camera.move(movePos);
+		camera->move(movePos);
 
 		static int lastMouseX;
 		static int lastMouseY;
 
 		glm::vec2 delta = input.getMousePos();
 		delta -= glm::vec2(lastMouseX, lastMouseY);
-		camera.rotateCamera(delta * deltaTime);
+		camera->rotateCamera(delta * deltaTime);
 		lastMouseX = input.getMousePosX();
 		lastMouseY = input.getMousePosY();
 
@@ -105,14 +128,14 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 	//	<< " " << chunkManager.getPlayerInChunk({ camera.getPosition().x, camera.getPosition().z }).y << "\n";
 	
 	
-	chunkManager.setPlayerPos(glm::vec2{ camera.getPosition().x, camera.getPosition().z });
+	chunkManager.setPlayerPos(glm::vec2{ camera->getPosition().x, camera->getPosition().z });
 
 	
 	glm::ivec3 rayEnd = {};
 	glm::ivec3 blockPlace = {};
-	if(chunkManager.rayCast(rayEnd, blockPlace, camera.getPosition() +
+	if(chunkManager.rayCast(rayEnd, blockPlace, camera->getPosition() +
 		glm::vec3{0.5, 0.5, 0.5},
-		camera.getViewDirection()))
+		camera->getViewDirection()))
 	{
 		auto b = chunkManager.getBlockRaw(rayEnd);
 		if(b)
@@ -122,19 +145,19 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 
 		if(input.getKey(GameInput::RIGHT_CLICK).isReleased())
 		{
-			chunkManager.placeBlock(blockPlace, ice, camera.getPosition());
+			chunkManager.placeBlock(blockPlace, ice, camera->getPosition());
 		}
 
 		if (input.getKey(GameInput::LEFT_CLICK).isReleased())
 		{
-			chunkManager.placeBlock(rayEnd, 0, camera.getPosition());
+			chunkManager.placeBlock(rayEnd, 0, camera->getPosition());
 		}
 
 	}
 	
 
 
-	renderer.render(camera, chunkManager, skyBox);
+	renderer.render(*camera, chunkManager, skyBox);
 
 
 	//2d ui stuff
@@ -155,6 +178,6 @@ void Game::updateWindowMetrics(int screenW, int screenH)
 	renderer2d.updateWindowMetrics(screenW, screenH);
 	glViewport(0, 0, screenW, screenH);
 
-	camera.updateAspectRatio(screenW, screenH);
+	camera->updateAspectRatio(screenW, screenH);
 
 }

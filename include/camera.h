@@ -48,7 +48,7 @@ public:
 		aspectRatio = w / h;
 	}
 
-	virtual void move(glm::vec3 direction) { position += direction; }
+	virtual void move(glm::vec3 direction) = 0;
 
 
 protected:
@@ -65,12 +65,30 @@ protected:
 
 };
 
-class FirstPersonFlyCamera: public Camera
+
+//just moves in the direction without taking into acount it's orientation
+class KinematicCamera : public Camera
 {
 public:
 
-	void move(glm::vec3 direction);
+	virtual void move(glm::vec3 direction) override { position += direction; };
 
 
+};
+
+//moves in the direction of the orientation but stays at the same height
+class CreativeModeCamera: public Camera
+{
+public:
+
+	virtual void move(glm::vec3 direction) override;
+};
+
+//just moves in the direction of the orientation
+class FlyCamera: public Camera
+{
+public:
+
+	virtual void move(glm::vec3 direction) override;
 
 };

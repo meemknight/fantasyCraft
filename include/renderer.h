@@ -36,9 +36,9 @@ public:
 		//todo
 	}
 
-	void render(Camera c, Block b, glm::ivec3 pos);
-	void render(Camera c, Chunk &chunk);
-	void render(Camera c, ChunkManager &chunkManager, SkyBox &skyBox);
+	void render(Camera &c, Block b, glm::ivec3 pos);
+	void render(Camera &c, Chunk &chunk);
+	void render(Camera &c, ChunkManager &chunkManager, SkyBox &skyBox);
 
 private:
 

@@ -20,15 +20,8 @@ GameInput input;
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
 
-	if (key == GLFW_KEY_ESCAPE)
-	{
-		if (action == GLFW_PRESS)
-		{
-			
-		}
-	}
 
-	if (key == GLFW_KEY_W)
+	if (key == GLFW_KEY_W || key == GLFW_KEY_UP)
 	{
 		if(action == GLFW_PRESS)
 		{
@@ -40,7 +33,7 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 		}
 	}
 
-	if (key == GLFW_KEY_A)
+	if (key == GLFW_KEY_A || key == GLFW_KEY_LEFT)
 	{
 		if (action == GLFW_PRESS)
 		{
@@ -53,7 +46,7 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 		}
 	}
 
-	if (key == GLFW_KEY_S)
+	if (key == GLFW_KEY_S || key == GLFW_KEY_DOWN)
 	{
 		if (action == GLFW_PRESS)
 		{
@@ -66,7 +59,7 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 		}
 	}
 
-	if (key == GLFW_KEY_D)
+	if (key == GLFW_KEY_D || key == GLFW_KEY_RIGHT)
 	{
 		if (action == GLFW_PRESS)
 		{
@@ -104,6 +97,20 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 			input.setKeyRelease(GameInput::UP);
 		}
 	}
+
+	if (key == GLFW_KEY_C)
+	{
+		if (action == GLFW_PRESS)
+		{
+			input.setKeyPress(GameInput::C);
+		}
+		else
+		if (action == GLFW_RELEASE)
+		{
+			input.setKeyRelease(GameInput::C);
+		}
+	}
+
 
 };
 

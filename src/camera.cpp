@@ -58,7 +58,7 @@ void Camera::rotateCamera(float x, float y)
 
 }
 
-void FirstPersonFlyCamera::move(glm::vec3 direction)
+void CreativeModeCamera::move(glm::vec3 direction)
 {
 
 	glm::vec3 m = {};
@@ -71,9 +71,33 @@ void FirstPersonFlyCamera::move(glm::vec3 direction)
 		glm::vec3 v = getViewDirection();
 		v.y = 0;
 		m -= glm::normalize(v) * direction.z;
-		m += glm::normalize(glm::cross(v, glm::vec3{ 0,1,0 })) * direction.x;
+		m += glm::normalize(glm::cross(v, upVector)) * direction.x;
 	}
 
+
+	position += m;
+
+}
+
+void FlyCamera::move(glm::vec3 direction)
+{
+
+	glm::vec3 m = {};
+	m.y = direction.y;
+
+	glm::vec3 moveFront = direction;
+
+	if (direction.x || direction.z || direction.y)
+	{
+		glm::vec3 v = getViewDirection();
+
+		glm::vec3 vectorToTheRight = glm::cross(v, upVector);
+
+		m -= glm::normalize(v) * direction.z;
+		m += glm::normalize(glm::cross(v, upVector)) * direction.x;
+		m -= glm::normalize(glm::cross(v, vectorToTheRight)) * direction.y;
+
+	}
 
 	position += m;
 

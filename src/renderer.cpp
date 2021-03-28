@@ -138,7 +138,7 @@ void ChunksRenderer::init()
 }
 
 //deprecated
-void ChunksRenderer::render(Camera c, Block b, glm::ivec3 pos)
+void ChunksRenderer::render(Camera &c, Block b, glm::ivec3 pos)
 {
 	shader.bind();
 	texture.bind(0);
@@ -167,7 +167,7 @@ void ChunksRenderer::render(Camera c, Block b, glm::ivec3 pos)
 }
 
 //deprecated
-void ChunksRenderer::render(Camera c, Chunk &chunk)
+void ChunksRenderer::render(Camera &c, Chunk &chunk)
 {
 	shader.bind();
 	texture.bind(0);
@@ -208,7 +208,7 @@ void ChunksRenderer::render(Camera c, Chunk &chunk)
 
 }
 
-void ChunksRenderer::render(Camera c, ChunkManager &chunkManager, SkyBox &skyBox)
+void ChunksRenderer::render(Camera &c, ChunkManager &chunkManager, SkyBox &skyBox)
 {
 	//resort chunks and stuff
 	glm::ivec3 curentPosion = c.getPositionInWorld();
