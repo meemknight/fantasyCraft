@@ -13,7 +13,8 @@ public:
 	void clearTexture();
 
 
-	void loadTextures(const char* textures[]);
+	void loadTextures(const char *textures[]);
+	void loadTexturesFromCrossTexture(const char* texture);
 
 
 	void render(const glm::mat4 &viewProjection);

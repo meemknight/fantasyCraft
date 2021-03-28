@@ -35,7 +35,10 @@ void Game::onCreate(int screenW, int screenH)
 			RESOURCES_PATH "back.jpg"
 		};
 
-	skyBox.loadTextures(faces);
+	//skyBox.loadTextures(faces);
+	skyBox.loadTexturesFromCrossTexture(RESOURCES_PATH "skyBox.png");
+
+
 }
 
 void Game::onUpdate(float deltaTime, const GameInput &input)
