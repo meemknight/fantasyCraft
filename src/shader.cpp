@@ -88,7 +88,7 @@ std::string Shader::loadShaderSource(std::string source)
 
 	if (!f.is_open())
 	{
-		std::cout << "err loading " << source << "\n";
+		throw(std::string("err loading ") + source + "\n");
 	}
 
 	//most vexing parse here yay love cpp

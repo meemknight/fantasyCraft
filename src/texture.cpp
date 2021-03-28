@@ -15,8 +15,8 @@ void Texture::load(std::string path)
 
 	if (!f.is_open())
 	{
-		std::cout << "err loading " << path << "\n";
-		return;
+		throw(std::string( "err loading ") + path + "\n");
+	
 	}
 
 	//most vexing parse here yay love cpp
@@ -48,7 +48,6 @@ void Texture::load(std::string path)
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LOD, 4);
 	
-
 
 
 	this->id = id;

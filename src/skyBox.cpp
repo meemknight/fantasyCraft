@@ -198,7 +198,8 @@ void SkyBox::loadTexturesFromCrossTexture(const char *texture)
 	}
 	else
 	{
-		std::cout << "err loading " << texture << "\n";
+		throw(std::string("err loading ") + texture + "\n");
+
 	}
 
 

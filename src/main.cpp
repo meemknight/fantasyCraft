@@ -194,40 +194,46 @@ int main()
 	
 	gl2d::init();
 	
-	
-	Game game(500, 500);
-
-	long lastTime = clock();
-
-
-	while (!glfwWindowShouldClose(wind))
+	try
 	{
-		int w = 0; int h = 0;
-		glfwGetWindowSize(wind, &w, &h);
+		Game game(500, 500);
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		long lastTime = clock();
+
+		while (!glfwWindowShouldClose(wind))
+		{
+			int w = 0; int h = 0;
+			glfwGetWindowSize(wind, &w, &h);
+
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		#pragma region movement
+			long newTime = clock();
+			float deltaTime = (float)(newTime - lastTime) / CLOCKS_PER_SEC;
+			lastTime = clock();
+		#pragma endregion
+
+			double xMouse, yMouse;
+			glfwGetCursorPos(wind, &xMouse, &yMouse);
+			input.setMousePosition(xMouse, yMouse);
+
+			game.updateWindowMetrics(w, h);
+			game.onUpdate(deltaTime, input);
+			input.resetInputsThisFrame();
 
 
-	#pragma region movement
-		long newTime = clock();
-		float deltaTime = (float)(newTime - lastTime) / CLOCKS_PER_SEC;
-		lastTime = clock();
-	#pragma endregion
-
-		double xMouse, yMouse;
-		glfwGetCursorPos(wind, &xMouse, &yMouse);
-		input.setMousePosition(xMouse, yMouse);
-		
-		game.updateWindowMetrics(w, h);
-		game.onUpdate(deltaTime, input);
-		input.resetInputsThisFrame();
-
-		
-		glfwSwapBuffers(wind);
-		glfwPollEvents();
+			glfwSwapBuffers(wind);
+			glfwPollEvents();
+		}
 	}
-	
-	
+	catch (std::string msg)
+	{
+		std::cout << msg;
+		std::cin.clear();
+		std::cin.get();
+	}
+
+
 
 	//if you want the console to stay after closing the window
 	//std::cin.clear();
