@@ -385,7 +385,7 @@ void ChunkManager::setGridSize(int size, glm::ivec2 playerPos)
 
 			loadedChunks.push_back(c);
 
-			newCreatedChunks.insert(loadedChunks.size()-1);
+			newCreatedChunks.insert(int(loadedChunks.size()-1));
 		}
 
 	}
@@ -526,7 +526,7 @@ void ChunkManager::generateChunk(Chunk &c)
 	{
 		for (int j = 0; j < 16; j++)
 		{
-			int height = 50 + getNoiseVal(i, 0, j) * 30;
+			int height = int(50 + getNoiseVal(i, 0, j) * 30);
 
 			for (int h = 0; h < CHUNK_HEIGHT; h++)
 			{
@@ -616,24 +616,24 @@ glm::ivec2 ChunkManager::getPlayerInChunk(glm::vec2 playerPos)
 
 	glm::ivec2 playerInChunk;
 	
-	constexpr float MARGIN = 0.001;
+	constexpr float MARGIN = 0.001f;
 
 	if (playerPos.x < 0)
 	{
-		playerInChunk.x = (playerPos.x+ MARGIN) / 16;
+		playerInChunk.x = int((playerPos.x+ MARGIN) / 16);
 		playerInChunk.x--;
 	}else
 	{
-		playerInChunk.x = playerPos.x / 16;
+		playerInChunk.x = int(playerPos.x / 16);
 	}
 	
 	if (playerPos.y < 0)
 	{
-		playerInChunk.y = (playerPos.y + MARGIN) / 16;
+		playerInChunk.y = int((playerPos.y + MARGIN) / 16);
 		playerInChunk.y--;
 	}else
 	{
-		playerInChunk.y = playerPos.y / 16;
+		playerInChunk.y = int(playerPos.y / 16);
 	}
 	
 	return playerInChunk;
@@ -649,9 +649,9 @@ bool ChunkManager::rayCast(glm::ivec3 &pos, glm::ivec3 &lastPos, glm::vec3 start
 	glm::vec3 p = start;
 
 	direction = glm::normalize(direction);
-	direction *= 0.1;
+	direction *= 0.1f;
 
-	for (float moveSoFar = 0; moveSoFar <= maxRaySize; moveSoFar += 0.1)
+	for (float moveSoFar = 0; moveSoFar <= maxRaySize; moveSoFar += 0.1f)
 	{
 		if (p.y < 0) { return 0; }
 		if (p.y >= CHUNK_HEIGHT) { return 0; }
@@ -803,7 +803,7 @@ void ChunkManager::setNeighbours(std::set<int> &newCreatedChunks, std::set<int> 
 			{
 				loadedChunks[id]->chunkInFront = *itFront;
 
-				auto ind = itFront - loadedChunks.begin();
+				int ind = int(itFront - loadedChunks.begin());
 				chunksToRecalculate.insert(ind);
 			}
 
@@ -818,7 +818,7 @@ void ChunkManager::setNeighbours(std::set<int> &newCreatedChunks, std::set<int> 
 			{
 				loadedChunks[id]->chunkInBack = *itBack;
 
-				auto ind = itBack - loadedChunks.begin();
+				int ind = int(itBack - loadedChunks.begin());
 				chunksToRecalculate.insert(ind);
 			}
 		
@@ -835,7 +835,7 @@ void ChunkManager::setNeighbours(std::set<int> &newCreatedChunks, std::set<int> 
 				loadedChunks[id]->chunkAtLeft = *itLeft;
 
 
-				auto ind = itLeft - loadedChunks.begin();
+				int ind = int(itLeft - loadedChunks.begin());
 				chunksToRecalculate.insert(ind);
 			}
 		}
@@ -849,7 +849,7 @@ void ChunkManager::setNeighbours(std::set<int> &newCreatedChunks, std::set<int> 
 			{
 				loadedChunks[id]->chunkAtRight = *itRight;
 		
-				auto ind = itRight - loadedChunks.begin();
+				int ind = int(itRight - loadedChunks.begin());
 				chunksToRecalculate.insert(ind);
 			}
 

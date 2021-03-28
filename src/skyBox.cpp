@@ -138,7 +138,7 @@ void SkyBox::loadTexturesFromCrossTexture(const char *texture)
 
 	auto getPixel = [&](int x, int y, unsigned char *data)
 	{
-		return data + 3 * (x + y * width);
+		return (unsigned char*)(data + 3 * (x + y * width));
 	};
 
 	glm::ivec2 paddings[6];
@@ -199,7 +199,6 @@ void SkyBox::loadTexturesFromCrossTexture(const char *texture)
 	else
 	{
 		throw(std::string("err loading ") + texture + "\n");
-
 	}
 
 

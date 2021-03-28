@@ -172,11 +172,13 @@ int main()
 #ifdef PLATFORM_WIN32
 #ifdef _MSC_VER 
 #if INTERNAL_BUILD
+{
 	AllocConsole();
-	freopen("conin$", "r", stdin);
-	freopen("conout$", "w", stdout);
-	freopen("conout$", "w", stderr);
+	auto f1 = freopen("conin$", "r", stdin);
+	auto f2 = freopen("conout$", "w", stdout);
+	auto f3 = freopen("conout$", "w", stderr);
 	std::cout.sync_with_stdio();
+}
 #endif
 #endif
 #endif
@@ -222,7 +224,7 @@ int main()
 
 			double xMouse, yMouse;
 			glfwGetCursorPos(wind, &xMouse, &yMouse);
-			input.setMousePosition(xMouse, yMouse);
+			input.setMousePosition((int)xMouse, (int)yMouse);
 
 			game.updateWindowMetrics(w, h);
 			game.onUpdate(deltaTime, input);
