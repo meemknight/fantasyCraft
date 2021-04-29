@@ -5,7 +5,6 @@ void ChunksRenderer::init()
 
 	texture.load(RESOURCES_PATH "blocks.png");
 
-	//front
 	float facePositions[6][12] =
 	{
 		//front
@@ -20,13 +19,13 @@ void ChunksRenderer::init()
 		0.5, 0.5, -0.5,
 		0.5, -0.5, -0.5,
 
-		//bottom
+		//top
 		-0.5, 0.5, -0.5,
 		-0.5, 0.5, 0.5,
 		0.5, 0.5, 0.5,
 		0.5, 0.5, -0.5,
 
-		//top
+		//bottom
 		0.5, -0.5, 0.5,
 		-0.5, -0.5, 0.5,
 		-0.5, -0.5, -0.5,
@@ -46,41 +45,54 @@ void ChunksRenderer::init()
 
 	};
 
-	//front
 	float faceTexture[6][8] =
 	{
+		//front
 		1,1,
 		0,1,
 		0,0,
 		1,0,
 
+		//back
 		0,0,
 		0,1,
 		1,1,
 		1,0,
 
+		//bottom
 		1,1,
 		0,1,
 		0,0,
 		1,0,
 
+		//top
 		1,1,
 		0,1,
 		0,0,
 		1,0,
 
+		//left
 		1,0,
 		1,1,
 		0,1,
 		0,0,
 
+		//right
 		1,1,
 		0,1,
 		0,0,
 		1,0,
 	};
 
-	//front
+	uint8_t vertexMask[4]
+	{
+		0b0000'0001,
+		0b0000'0010,
+		0b0000'0100,
+		0b0000'1000,
+	};
+
+	//all faces
 	unsigned int faceIndeces[6]
 	{
 		0,1,2,
@@ -99,6 +111,12 @@ void ChunksRenderer::init()
 
 	glGenBuffers(6, positionsbuffer);
 	glGenBuffers(6, textureUVbuffer);
+	glGenBuffers(6, aoBuffer);
+
+	glGenBuffers(1, &faceMask);
+	glBindBuffer(GL_ARRAY_BUFFER, faceMask);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexMask), vertexMask, GL_STATIC_DRAW);
+
 
 	for(int i=0; i<6;i++)
 	{
@@ -127,12 +145,18 @@ void ChunksRenderer::init()
 		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, (void *)0);
 		glVertexAttribDivisor(3, 1);
 		
+		glBindBuffer(GL_ARRAY_BUFFER, aoBuffer[i]);
+		glEnableVertexAttribArray(4);
+		glVertexAttribIPointer(4, 1, GL_UNSIGNED_BYTE, 0, (void *)0);
+		glVertexAttribDivisor(4, 1);
+
+		glBindBuffer(GL_ARRAY_BUFFER, faceMask);
+		glEnableVertexAttribArray(5);
+		glVertexAttribIPointer(5, 1, GL_UNSIGNED_BYTE, 0, (void *)0);
 
 	}
 
-
 	glBindVertexArray(0);
-
 
 
 }
@@ -232,7 +256,6 @@ void ChunksRenderer::render(Camera &c, ChunkManager &chunkManager, SkyBox &skyBo
 
 	//
 
-
 	shader.bind();
 	texture.bind(0);
 	shader.setProjectionMatrix(c.getProjectionMatrix());
@@ -246,6 +269,7 @@ void ChunksRenderer::render(Camera &c, ChunkManager &chunkManager, SkyBox &skyBo
 	{
 		facesVector.clear();
 		uvVector.clear();
+		aoVector.clear();
 
 		for (auto c : chunkManager.loadedChunks)
 		{
@@ -261,8 +285,11 @@ void ChunksRenderer::render(Camera &c, ChunkManager &chunkManager, SkyBox &skyBo
 
 				glm::vec2 uv = c->UVs[face][i];
 
+				uint8_t ao = c->ao[face][i];
+
 				facesVector.push_back(pos);
 				uvVector.push_back(uv);
+				aoVector.push_back(ao);
 			}
 
 		}
@@ -274,7 +301,6 @@ void ChunksRenderer::render(Camera &c, ChunkManager &chunkManager, SkyBox &skyBo
 		glEnableVertexAttribArray(2);
 		glVertexAttribIPointer(2, 3, GL_INT, 0, (void *)0);
 		glVertexAttribDivisor(2, 1);
-
 		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::ivec3) * facesVector.size(),
 			facesVector.data(), GL_STREAM_DRAW);
 
@@ -282,9 +308,14 @@ void ChunksRenderer::render(Camera &c, ChunkManager &chunkManager, SkyBox &skyBo
 		glEnableVertexAttribArray(3);
 		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, (void *)0);
 		glVertexAttribDivisor(3, 1);
-
 		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * uvVector.size(),
 			uvVector.data(), GL_STREAM_DRAW);
+
+		glBindBuffer(GL_ARRAY_BUFFER, aoBuffer[face]);
+		glEnableVertexAttribArray(4);
+		glVertexAttribIPointer(4, 1, GL_UNSIGNED_BYTE, 0, (void *)0);
+		glVertexAttribDivisor(4, 1);
+		glBufferData(GL_ARRAY_BUFFER, 1 * aoVector.size(), aoVector.data(), GL_STREAM_DRAW);
 
 		glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, facesVector.size());
 

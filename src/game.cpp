@@ -53,7 +53,6 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//glEnable(GL_MULTISAMPLE);
 
-
 	//input
 	{
 		if(input.getKey(GameInput::C).isReleased())
@@ -145,7 +144,7 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 
 		if(input.getKey(GameInput::RIGHT_CLICK).isReleased())
 		{
-			chunkManager.placeBlock(blockPlace, ice, camera->getPosition());
+			chunkManager.placeBlock(blockPlace,	stone , camera->getPosition());
 		}
 
 		if (input.getKey(GameInput::LEFT_CLICK).isReleased())
@@ -156,9 +155,7 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 	}
 	
 
-
 	renderer.render(*camera, chunkManager, skyBox);
-
 
 	//2d ui stuff
 

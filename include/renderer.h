@@ -33,11 +33,14 @@ public:
 
 	~ChunksRenderer()
 	{
-		//todo
 	}
 
+	//deprecated
 	void render(Camera &c, Block b, glm::ivec3 pos);
+	
+	//deprecated
 	void render(Camera &c, Chunk &chunk);
+
 	void render(Camera &c, ChunkManager &chunkManager, SkyBox &skyBox);
 
 private:
@@ -56,10 +59,13 @@ private:
 
 	GLuint positionsbuffer[6];
 	GLuint textureUVbuffer[6];
+	GLuint aoBuffer[6];
+	GLuint faceMask;
 
 
 	std::vector<glm::ivec3> facesVector;
 	std::vector<glm::vec2> uvVector;
+	std::vector<uint8_t> aoVector;
 
 	glm::ivec3 lastPosition = {};
 

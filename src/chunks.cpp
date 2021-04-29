@@ -8,16 +8,19 @@ void Chunk::calculateFaces()
 {
 	for (int i = 0; i<6; i++)
 	{
+		positions[i].reserve(200);
 		positions[i].clear();
+
+		UVs[i].reserve(200);
 		UVs[i].clear();
 
-		positions[i].reserve(200);
-		UVs[i].reserve(200);
-		
-		transparentPositions[i].clear();
-		transparentUVs[i].clear();
+		ao[i].clear();
+		ao[i].reserve(200);
 
+		transparentPositions[i].clear();
 		transparentPositions[i].reserve(200);
+
+		transparentUVs[i].clear();
 		transparentUVs[i].reserve(200);
 
 	}
@@ -26,6 +29,7 @@ void Chunk::calculateFaces()
 		for (int z = 0; z < CHUNK_SIZE; z++)
 			for (int y = 0; y < CHUNK_HEIGHT; y++)
 			{
+				int front = 0, back = 0, top = 0, bottom = 0, left = 0, right = 0;
 
 				auto &b = *getBlock(x, y, z);
 
@@ -56,7 +60,7 @@ void Chunk::calculateFaces()
 								positions[FRONT].emplace_back(x, y, z);
 								UVs[FRONT].push_back(b.getPositionInAtlas(FRONT));
 							}
-
+							front = true;
 						}
 					}
 					
@@ -75,6 +79,7 @@ void Chunk::calculateFaces()
 						positions[FRONT].emplace_back(x, y, z);
 						UVs[FRONT].push_back(b.getPositionInAtlas(FRONT));
 					}
+					front = true;
 
 				}
 
@@ -97,7 +102,7 @@ void Chunk::calculateFaces()
 								positions[BACK].emplace_back(x, y, z);
 								UVs[BACK].push_back(b.getPositionInAtlas(BACK));
 							}
-
+							back = true;
 							
 						}
 					}
@@ -116,8 +121,10 @@ void Chunk::calculateFaces()
 					{
 						positions[BACK].emplace_back(x, y, z);
 						UVs[BACK].push_back(b.getPositionInAtlas(BACK));
+						back = true;
+
 					}
-					
+
 				}
 
 				//top
@@ -134,8 +141,9 @@ void Chunk::calculateFaces()
 					{
 						positions[TOP].emplace_back(x, y, z);
 						UVs[TOP].push_back(b.getPositionInAtlas(TOP));
-					}
+						top = true;
 
+					}
 					
 				}
 
@@ -154,7 +162,7 @@ void Chunk::calculateFaces()
 						positions[BOTTOM].emplace_back(x, y, z);
 						UVs[BOTTOM].push_back(b.getPositionInAtlas(BOTTOM));
 					}
-					
+					bottom = true;
 				}
 
 				//left
@@ -176,7 +184,7 @@ void Chunk::calculateFaces()
 								positions[LEFT].emplace_back(x, y, z);
 								UVs[LEFT].push_back(b.getPositionInAtlas(LEFT));
 							}
-
+							left = true;
 						}
 					}
 
@@ -197,7 +205,7 @@ void Chunk::calculateFaces()
 						positions[LEFT].emplace_back(x, y, z);
 						UVs[LEFT].push_back(b.getPositionInAtlas(LEFT));
 					}
-
+					left = true;
 				}
 
 				//right
@@ -221,7 +229,7 @@ void Chunk::calculateFaces()
 								positions[RIGHT].emplace_back(x, y, z);
 								UVs[RIGHT].push_back(b.getPositionInAtlas(RIGHT));
 							}
-
+							right = true;
 						}
 					}
 
@@ -240,8 +248,135 @@ void Chunk::calculateFaces()
 						positions[RIGHT].emplace_back(x, y, z);
 						UVs[RIGHT].push_back(b.getPositionInAtlas(RIGHT));
 					}
+					right = true;
+
+				}
+
+
+				int TopFrontleft = 0;
+				int TopFrontright = 0;
+				int TopLeft = 0;
+				int TopRight = 0;
+				int TopBackleft = 0;
+				int TopBackright = 0;
+
+				int TopBack = 0;
+				int TopFront = 0;
+
+				if (y >= CHUNK_HEIGHT - 1) 
+				{
 					
 				}
+				else
+				{
+
+					if (z <= 0)
+					{
+						if (chunkInBack)
+						{
+							TopBack = chunkInBack->getBlock(x, y + 1, CHUNK_SIZE - 1)->isOpaque();
+						}
+					}
+					else 
+					{
+						TopBack = getBlock(x, y + 1, z - 1)->isOpaque();
+					}
+
+					if (z >= CHUNK_SIZE - 1)
+					{
+						if (chunkInFront)
+						{
+							TopFront = chunkInFront->getBlock(x, y + 1, 0)->isOpaque();
+						}
+					}
+					else
+					{
+						TopFront = getBlock(x, y + 1, z + 1)->isOpaque();
+					}
+
+					if (x <= 0)
+					{
+						if (chunkAtLeft)
+						{
+							TopLeft = chunkAtLeft->getBlock(CHUNK_SIZE - 1, y+1, z)->isOpaque();
+						}
+					}else
+					{
+						TopLeft = getBlock(x - 1, y+1, z)->isOpaque();
+					}
+
+					if (x >= CHUNK_SIZE - 1)
+					{
+						if (chunkAtRight)
+						{
+							TopRight = chunkAtRight->getBlock(0, y+1, z)->isOpaque();
+						}
+					}else
+					{
+						TopRight = getBlock(x + 1, y+1, z)->isOpaque();
+					}
+				}
+
+				if (top)
+				{
+					uint8_t val = 0;
+
+					if(TopBack || TopLeft)
+					{
+					}else
+					{
+						val |= 0b0000'0001;
+					}
+					
+					if(TopFront || TopLeft)
+					{
+					}else
+					{
+						val |= 0b0000'0010;
+					}
+					
+					if (TopFront || TopRight)
+					{
+					}else
+					{
+						val |= 0b0000'0100;
+					}
+					
+					if(TopBack || TopRight)
+					{
+					}else
+					{
+						val |= 0b0000'1000;
+					}
+
+					ao[TOP].push_back(val);
+				}
+
+				if(bottom)
+				{
+					ao[BOTTOM].push_back(0);
+				}
+
+				if (left)
+				{
+					ao[LEFT].push_back(0);
+				}
+
+				if (right)
+				{
+					ao[RIGHT].push_back(0);
+				}
+
+				if (front)
+				{
+					ao[FRONT].push_back(0);
+				}
+
+				if (back)
+				{
+					ao[BACK].push_back(0);
+				}
+
 			}
 
 }
