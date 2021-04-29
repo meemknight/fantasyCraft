@@ -259,7 +259,6 @@ void Chunk::calculateFaces()
 				int TopRight = 0;
 				int TopBackleft = 0;
 				int TopBackright = 0;
-
 				int TopBack = 0;
 				int TopFront = 0;
 
@@ -282,6 +281,54 @@ void Chunk::calculateFaces()
 						TopBack = getBlock(x, y + 1, z - 1)->isOpaque();
 					}
 
+					if(z<=0 && x<=0)
+					{
+						if(chunkInBack && chunkInBack->chunkAtLeft)
+						{
+							TopBackleft = chunkInBack->chunkAtLeft->getBlock(CHUNK_SIZE - 1, y + 1, CHUNK_SIZE - 1)->isOpaque();
+						}
+					}
+					else if(z<=0)
+					{
+						if (chunkInBack)
+						{
+							TopBackleft = chunkInBack->getBlock(x-1, y + 1, CHUNK_SIZE - 1)->isOpaque();
+						}
+					}else if(x <=0)
+					{
+						if (chunkAtLeft)
+						{
+							TopBackleft = chunkAtLeft->getBlock(CHUNK_SIZE - 1, y + 1, z-1)->isOpaque();
+						}
+					}else
+					{
+						TopBackleft = getBlock(x - 1, y + 1, z - 1)->isOpaque();
+					}
+
+					if(z<=0 && x >= CHUNK_SIZE - 1)
+					{
+						if(chunkInBack && chunkInBack->chunkAtRight)
+						{
+							TopBackright = chunkInBack->chunkAtRight->getBlock(0, y + 1, CHUNK_SIZE - 1)->isOpaque();
+						}
+					}else if(z<=0)
+					{
+						if (chunkInBack)
+						{
+							TopBackright = chunkInBack->getBlock(x + 1, y + 1, CHUNK_SIZE - 1)->isOpaque();
+						}
+					}else if(x>=CHUNK_SIZE-1)
+					{
+						if (chunkAtRight)
+						{
+							TopBackright = chunkAtRight->getBlock(0, y + 1, z - 1)->isOpaque();
+						}
+					}
+					else
+					{
+						TopBackright = getBlock(x + 1, y + 1, z - 1)->isOpaque();
+					}
+
 					if (z >= CHUNK_SIZE - 1)
 					{
 						if (chunkInFront)
@@ -292,6 +339,59 @@ void Chunk::calculateFaces()
 					else
 					{
 						TopFront = getBlock(x, y + 1, z + 1)->isOpaque();
+					}
+
+					if (z >= CHUNK_SIZE - 1 && x <= 0)
+					{
+						if (chunkInFront && chunkInFront->chunkAtLeft)
+						{
+							TopFrontleft = chunkInFront->chunkAtLeft->getBlock(CHUNK_SIZE - 1, y + 1, 0)->isOpaque();
+						}
+					}
+					else if (z >= CHUNK_SIZE - 1)
+					{
+						if (chunkInFront)
+						{
+							TopFrontleft = chunkInFront->getBlock(x-1, y + 1, 0)->isOpaque();
+						}
+
+					}else if(x <= 0)
+					{
+						if (chunkAtLeft)
+						{
+							TopFrontleft = chunkAtLeft->getBlock(CHUNK_SIZE - 1, y + 1, z + 1)->isOpaque();
+						}
+					}
+					else
+					{
+						TopFrontleft = getBlock(x - 1, y + 1, z + 1)->isOpaque();
+					}
+
+					if (z >= CHUNK_SIZE - 1 && x >= CHUNK_SIZE - 1)
+					{
+						if (chunkInFront && chunkInFront->chunkAtRight)
+						{
+							TopFrontright = chunkInFront->chunkAtRight->getBlock(0, y + 1, 0)->isOpaque();
+						}
+					}
+					else if (z >= CHUNK_SIZE - 1)
+					{
+						if(chunkInFront)
+						{
+							TopFrontright = chunkInFront->getBlock(x + 1, y + 1, 0)->isOpaque();
+						}
+					}
+					else if (x >= CHUNK_SIZE - 1)
+					{
+						if (chunkAtRight)
+						{
+							TopFrontright = chunkAtRight->getBlock(0, y + 1, z+1)->isOpaque();
+						}
+
+					}else
+					{
+						TopFrontright = getBlock(x+1, y + 1, z + 1)->isOpaque();
+
 					}
 
 					if (x <= 0)
@@ -321,28 +421,29 @@ void Chunk::calculateFaces()
 				{
 					uint8_t val = 0;
 
-					if(TopBack || TopLeft)
+					if(TopBack || TopLeft ||TopBackleft)
 					{
+						//shadow
 					}else
 					{
 						val |= 0b0000'0001;
 					}
 					
-					if(TopFront || TopLeft)
+					if(TopFront || TopLeft || TopFrontleft)
 					{
 					}else
 					{
 						val |= 0b0000'0010;
 					}
 					
-					if (TopFront || TopRight)
+					if (TopFront || TopRight || TopFrontright)
 					{
 					}else
 					{
 						val |= 0b0000'0100;
 					}
 					
-					if(TopBack || TopRight)
+					if(TopBack || TopRight || TopBackright)
 					{
 					}else
 					{
@@ -354,27 +455,27 @@ void Chunk::calculateFaces()
 
 				if(bottom)
 				{
-					ao[BOTTOM].push_back(0);
+					ao[BOTTOM].push_back(0b0000'1111);
 				}
 
 				if (left)
 				{
-					ao[LEFT].push_back(0);
+					ao[LEFT].push_back(0b0000'1111);
 				}
 
 				if (right)
 				{
-					ao[RIGHT].push_back(0);
+					ao[RIGHT].push_back(0b0000'1111);
 				}
 
 				if (front)
 				{
-					ao[FRONT].push_back(0);
+					ao[FRONT].push_back(0b0000'1111);
 				}
 
 				if (back)
 				{
-					ao[BACK].push_back(0);
+					ao[BACK].push_back(0b0000'1111);
 				}
 
 			}
