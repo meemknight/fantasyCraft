@@ -262,135 +262,146 @@ void Chunk::calculateFaces()
 				int TopBack = 0;
 				int TopFront = 0;
 
-				if (y >= CHUNK_HEIGHT - 1) 
+				auto getNeighbourBlocks = [x, z, this](
+					int y,
+					int &frontleft,
+					int &frontright,
+					int &left,
+					int &right,
+					int &backleft,
+					int &backright,
+					int &back,
+					int &front
+					) 
 				{
-					
-				}
-				else
-				{
-
 					if (z <= 0)
 					{
 						if (chunkInBack)
 						{
-							TopBack = chunkInBack->getBlock(x, y + 1, CHUNK_SIZE - 1)->isOpaque();
+							back = chunkInBack->getBlock(x, y, CHUNK_SIZE - 1)->isOpaque();
 						}
 					}
-					else 
+					else
 					{
-						TopBack = getBlock(x, y + 1, z - 1)->isOpaque();
+						back = getBlock(x, y, z - 1)->isOpaque();
 					}
 
-					if(z<=0 && x<=0)
+					if (z <= 0 && x <= 0)
 					{
-						if(chunkInBack && chunkInBack->chunkAtLeft)
+						if (chunkInBack && chunkInBack->chunkAtLeft)
 						{
-							TopBackleft = chunkInBack->chunkAtLeft->getBlock(CHUNK_SIZE - 1, y + 1, CHUNK_SIZE - 1)->isOpaque();
+							backleft = chunkInBack->chunkAtLeft->getBlock(CHUNK_SIZE - 1, y, CHUNK_SIZE - 1)->isOpaque();
 						}
 					}
-					else if(z<=0)
+					else if (z <= 0)
 					{
 						if (chunkInBack)
 						{
-							TopBackleft = chunkInBack->getBlock(x-1, y + 1, CHUNK_SIZE - 1)->isOpaque();
+							backleft = chunkInBack->getBlock(x - 1, y, CHUNK_SIZE - 1)->isOpaque();
 						}
-					}else if(x <=0)
+					}
+					else if (x <= 0)
 					{
 						if (chunkAtLeft)
 						{
-							TopBackleft = chunkAtLeft->getBlock(CHUNK_SIZE - 1, y + 1, z-1)->isOpaque();
+							backleft = chunkAtLeft->getBlock(CHUNK_SIZE - 1, y, z - 1)->isOpaque();
 						}
-					}else
+					}
+					else
 					{
-						TopBackleft = getBlock(x - 1, y + 1, z - 1)->isOpaque();
+						backleft = getBlock(x - 1, y, z - 1)->isOpaque();
 					}
 
-					if(z<=0 && x >= CHUNK_SIZE - 1)
+					if (z <= 0 && x >= CHUNK_SIZE - 1)
 					{
-						if(chunkInBack && chunkInBack->chunkAtRight)
+						if (chunkInBack && chunkInBack->chunkAtRight)
 						{
-							TopBackright = chunkInBack->chunkAtRight->getBlock(0, y + 1, CHUNK_SIZE - 1)->isOpaque();
+							backright = chunkInBack->chunkAtRight->getBlock(0, y, CHUNK_SIZE - 1)->isOpaque();
 						}
-					}else if(z<=0)
+					}
+					else if (z <= 0)
 					{
 						if (chunkInBack)
 						{
-							TopBackright = chunkInBack->getBlock(x + 1, y + 1, CHUNK_SIZE - 1)->isOpaque();
-						}
-					}else if(x>=CHUNK_SIZE-1)
-					{
-						if (chunkAtRight)
-						{
-							TopBackright = chunkAtRight->getBlock(0, y + 1, z - 1)->isOpaque();
-						}
-					}
-					else
-					{
-						TopBackright = getBlock(x + 1, y + 1, z - 1)->isOpaque();
-					}
-
-					if (z >= CHUNK_SIZE - 1)
-					{
-						if (chunkInFront)
-						{
-							TopFront = chunkInFront->getBlock(x, y + 1, 0)->isOpaque();
-						}
-					}
-					else
-					{
-						TopFront = getBlock(x, y + 1, z + 1)->isOpaque();
-					}
-
-					if (z >= CHUNK_SIZE - 1 && x <= 0)
-					{
-						if (chunkInFront && chunkInFront->chunkAtLeft)
-						{
-							TopFrontleft = chunkInFront->chunkAtLeft->getBlock(CHUNK_SIZE - 1, y + 1, 0)->isOpaque();
-						}
-					}
-					else if (z >= CHUNK_SIZE - 1)
-					{
-						if (chunkInFront)
-						{
-							TopFrontleft = chunkInFront->getBlock(x-1, y + 1, 0)->isOpaque();
-						}
-
-					}else if(x <= 0)
-					{
-						if (chunkAtLeft)
-						{
-							TopFrontleft = chunkAtLeft->getBlock(CHUNK_SIZE - 1, y + 1, z + 1)->isOpaque();
-						}
-					}
-					else
-					{
-						TopFrontleft = getBlock(x - 1, y + 1, z + 1)->isOpaque();
-					}
-
-					if (z >= CHUNK_SIZE - 1 && x >= CHUNK_SIZE - 1)
-					{
-						if (chunkInFront && chunkInFront->chunkAtRight)
-						{
-							TopFrontright = chunkInFront->chunkAtRight->getBlock(0, y + 1, 0)->isOpaque();
-						}
-					}
-					else if (z >= CHUNK_SIZE - 1)
-					{
-						if(chunkInFront)
-						{
-							TopFrontright = chunkInFront->getBlock(x + 1, y + 1, 0)->isOpaque();
+							backright = chunkInBack->getBlock(x + 1, y, CHUNK_SIZE - 1)->isOpaque();
 						}
 					}
 					else if (x >= CHUNK_SIZE - 1)
 					{
 						if (chunkAtRight)
 						{
-							TopFrontright = chunkAtRight->getBlock(0, y + 1, z+1)->isOpaque();
+							backright = chunkAtRight->getBlock(0, y, z - 1)->isOpaque();
+						}
+					}
+					else
+					{
+						backright = getBlock(x + 1, y, z - 1)->isOpaque();
+					}
+
+					if (z >= CHUNK_SIZE - 1)
+					{
+						if (chunkInFront)
+						{
+							front = chunkInFront->getBlock(x, y, 0)->isOpaque();
+						}
+					}
+					else
+					{
+						front = getBlock(x, y, z + 1)->isOpaque();
+					}
+
+					if (z >= CHUNK_SIZE - 1 && x <= 0)
+					{
+						if (chunkInFront && chunkInFront->chunkAtLeft)
+						{
+							frontleft = chunkInFront->chunkAtLeft->getBlock(CHUNK_SIZE - 1, y, 0)->isOpaque();
+						}
+					}
+					else if (z >= CHUNK_SIZE - 1)
+					{
+						if (chunkInFront)
+						{
+							frontleft = chunkInFront->getBlock(x - 1, y, 0)->isOpaque();
 						}
 
-					}else
+					}
+					else if (x <= 0)
 					{
-						TopFrontright = getBlock(x+1, y + 1, z + 1)->isOpaque();
+						if (chunkAtLeft)
+						{
+							frontleft = chunkAtLeft->getBlock(CHUNK_SIZE - 1, y, z + 1)->isOpaque();
+						}
+					}
+					else
+					{
+						frontleft = getBlock(x - 1, y, z + 1)->isOpaque();
+					}
+
+					if (z >= CHUNK_SIZE - 1 && x >= CHUNK_SIZE - 1)
+					{
+						if (chunkInFront && chunkInFront->chunkAtRight)
+						{
+							frontright = chunkInFront->chunkAtRight->getBlock(0, y, 0)->isOpaque();
+						}
+					}
+					else if (z >= CHUNK_SIZE - 1)
+					{
+						if (chunkInFront)
+						{
+							frontright = chunkInFront->getBlock(x + 1, y, 0)->isOpaque();
+						}
+					}
+					else if (x >= CHUNK_SIZE - 1)
+					{
+						if (chunkAtRight)
+						{
+							frontright = chunkAtRight->getBlock(0, y, z + 1)->isOpaque();
+						}
+
+					}
+					else
+					{
+						frontright = getBlock(x + 1, y, z + 1)->isOpaque();
 
 					}
 
@@ -398,24 +409,33 @@ void Chunk::calculateFaces()
 					{
 						if (chunkAtLeft)
 						{
-							TopLeft = chunkAtLeft->getBlock(CHUNK_SIZE - 1, y+1, z)->isOpaque();
+							left = chunkAtLeft->getBlock(CHUNK_SIZE - 1, y, z)->isOpaque();
 						}
-					}else
+					}
+					else
 					{
-						TopLeft = getBlock(x - 1, y+1, z)->isOpaque();
+						left = getBlock(x - 1, y, z)->isOpaque();
 					}
 
 					if (x >= CHUNK_SIZE - 1)
 					{
 						if (chunkAtRight)
 						{
-							TopRight = chunkAtRight->getBlock(0, y+1, z)->isOpaque();
+							right = chunkAtRight->getBlock(0, y, z)->isOpaque();
 						}
-					}else
-					{
-						TopRight = getBlock(x + 1, y+1, z)->isOpaque();
 					}
+					else
+					{
+						right = getBlock(x + 1, y, z)->isOpaque();
+					}
+				};
+				
+				if (y < CHUNK_HEIGHT - 1)
+				{
+					getNeighbourBlocks(y + 1, TopFrontleft, TopFrontright, TopLeft, TopRight, TopBackleft, TopBackright, TopBack, TopFront);
+
 				}
+
 
 				if (top)
 				{
