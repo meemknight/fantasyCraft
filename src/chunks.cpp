@@ -253,15 +253,6 @@ void Chunk::calculateFaces()
 				}
 
 
-				int TopFrontleft = 0;
-				int TopFrontright = 0;
-				int TopLeft = 0;
-				int TopRight = 0;
-				int TopBackleft = 0;
-				int TopBackright = 0;
-				int TopBack = 0;
-				int TopFront = 0;
-
 				auto getNeighbourBlocks = [x, z, this](
 					int y,
 					int &frontleft,
@@ -425,15 +416,48 @@ void Chunk::calculateFaces()
 						}
 					}
 					else
-					{
+					{ 
 						right = getBlock(x + 1, y, z)->isOpaque();
 					}
 				};
-				
+
+				int TopFrontleft = 0;
+				int TopFrontright = 0;
+				int TopLeft = 0;
+				int TopRight = 0;
+				int TopBackleft = 0;
+				int TopBackright = 0;
+				int TopBack = 0;
+				int TopFront = 0;
+
+				int MiddleFrontleft = 0;
+				int MiddleFrontright = 0;
+				int MiddleLeft = 0;
+				int MiddleRight = 0;
+				int MiddleBackleft = 0;
+				int MiddleBackright = 0;
+				int MiddleBack = 0;
+				int MiddleFront = 0;
+
+				int BottomFrontleft = 0;
+				int BottomFrontright = 0;
+				int BottomLeft = 0;
+				int BottomRight = 0;
+				int BottomBackleft = 0;
+				int BottomBackright = 0;
+				int BottomBack = 0;
+				int BottomFront = 0;
+
 				if (y < CHUNK_HEIGHT - 1)
 				{
 					getNeighbourBlocks(y + 1, TopFrontleft, TopFrontright, TopLeft, TopRight, TopBackleft, TopBackright, TopBack, TopFront);
+				}
+				
+				getNeighbourBlocks(y, MiddleFrontleft, MiddleFrontright, MiddleLeft, MiddleRight, MiddleBackleft, MiddleBackright, MiddleBack, MiddleFront);
 
+				if (y > 0)
+				{
+					getNeighbourBlocks(y - 1, BottomFrontleft, BottomFrontright, BottomLeft, BottomRight, BottomBackleft, BottomBackright, BottomBack, BottomFront);
 				}
 
 
@@ -475,27 +499,197 @@ void Chunk::calculateFaces()
 
 				if(bottom)
 				{
-					ao[BOTTOM].push_back(0b0000'1111);
+					uint8_t val = 0;
+
+					if (BottomBack || BottomLeft || BottomBackleft)
+					{
+						//shadow
+					}
+					else
+					{
+						val |= 0b0000'0100;
+					}
+
+					if (BottomFront || BottomLeft || BottomFrontleft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0010;
+					}
+
+					if (BottomFront || BottomRight || BottomFrontright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0001;
+					}
+
+					if (BottomBack || BottomRight || BottomBackright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'1000;
+					}
+
+					ao[BOTTOM].push_back(val);
 				}
 
 				if (left)
 				{
-					ao[LEFT].push_back(0b0000'1111);
+					uint8_t val = 0;
+
+					if (BottomFrontleft || MiddleFrontleft || BottomLeft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0001;
+					}
+
+					if (TopFrontleft || MiddleFrontleft || TopLeft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0010;
+					}
+
+					if (TopBackleft || MiddleBackleft || TopLeft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0100;
+					}
+
+					if (BottomBackleft || MiddleBackleft || BottomLeft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'1000;
+					}
+
+					ao[LEFT].push_back(val);
 				}
 
 				if (right)
 				{
-					ao[RIGHT].push_back(0b0000'1111);
+					uint8_t val = 0;
+
+					if ( TopRight || MiddleBackright || TopBackright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0001;
+					}
+
+					if (TopRight || MiddleFrontright || TopFrontright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0010;
+					}
+
+					if (BottomRight || MiddleFrontright || BottomFrontright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0100;
+					}
+
+					if (BottomRight || MiddleBackright || BottomBackright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'1000;
+					}
+
+					ao[RIGHT].push_back(val);
 				}
 
 				if (front)
 				{
-					ao[FRONT].push_back(0b0000'1111);
+					uint8_t val = 0;
+
+					if(TopFront || MiddleFrontright || TopFrontright)
+					{
+					}else
+					{
+						val |= 0b0000'0001;
+					}
+					
+					if (TopFront || MiddleFrontleft || TopFrontleft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0010;
+					}
+
+					if (BottomFront || MiddleFrontleft || BottomFrontleft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0100;
+					}
+
+					if (BottomFront || MiddleFrontright || BottomFrontright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'1000;
+					}
+
+					ao[FRONT].push_back(val);
 				}
 
 				if (back)
 				{
-					ao[BACK].push_back(0b0000'1111);
+					uint8_t val = 0;
+
+					if(BottomBack || MiddleBackleft || BottomBackleft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0001;
+					}
+
+					if (TopBack || MiddleBackleft || TopBackleft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0010;
+					}
+
+					if (TopBack || MiddleBackright || TopBackright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0100;
+					}
+
+					if (BottomBack || MiddleBackright|| BottomBackright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'1000;
+					}
+
+					ao[BACK].push_back(val);
 				}
 
 			}

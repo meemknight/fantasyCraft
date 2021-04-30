@@ -13,7 +13,7 @@ void main()
 
 	color.rgba = texture2D(u_texture, v_textureUV).rgba;
 
-	float ambiendPart = 0.9;
+	float ambiendPart = 0.3;
 	float light = (v_ao * ambiendPart) + (1.0 - ambiendPart);
 
 	color.rgb *= light;
