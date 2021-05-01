@@ -21,96 +21,59 @@ GameInput input;
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
 
+	auto setKey = [&action](GameInput::keys k) 
+	{
+		if (action == GLFW_PRESS)
+		{
+			input.setKeyPress(k);
+		}
+		else
+		if (action == GLFW_RELEASE)
+		{
+			input.setKeyRelease(k);
+		}
+	};
 
 	if (key == GLFW_KEY_W || key == GLFW_KEY_UP)
 	{
-		if(action == GLFW_PRESS)
-		{
-			input.setKeyPress(GameInput::FRONT);
-		}else
-		if(action == GLFW_RELEASE)
-		{
-			input.setKeyRelease(GameInput::FRONT);
-		}
+		setKey(GameInput::FRONT);
 	}
 
 	if (key == GLFW_KEY_A || key == GLFW_KEY_LEFT)
 	{
-		if (action == GLFW_PRESS)
-		{
-			input.setKeyPress(GameInput::LEFT);
-		}
-		else
-		if (action == GLFW_RELEASE)
-		{
-			input.setKeyRelease(GameInput::LEFT);
-		}
+		setKey(GameInput::LEFT);
 	}
 
 	if (key == GLFW_KEY_S || key == GLFW_KEY_DOWN)
 	{
-		if (action == GLFW_PRESS)
-		{
-			input.setKeyPress(GameInput::BACK);
-		}
-		else
-		if (action == GLFW_RELEASE)
-		{
-			input.setKeyRelease(GameInput::BACK);
-		}
+		setKey(GameInput::BACK);
 	}
 
 	if (key == GLFW_KEY_D || key == GLFW_KEY_RIGHT)
 	{
-		if (action == GLFW_PRESS)
-		{
-			input.setKeyPress(GameInput::RIGHT);
-		}
-		else
-		if (action == GLFW_RELEASE)
-		{
-			input.setKeyRelease(GameInput::RIGHT);
-		}
+		setKey(GameInput::RIGHT);
 	}
 
 	if (key == GLFW_KEY_Q)
 	{
-		if (action == GLFW_PRESS)
-		{
-			input.setKeyPress(GameInput::DOWN);
-		}
-		else
-		if (action == GLFW_RELEASE)
-		{
-			input.setKeyRelease(GameInput::DOWN);
-		}
+		setKey(GameInput::DOWN);
 	}
 
 	if (key == GLFW_KEY_E)
 	{
-		if (action == GLFW_PRESS)
-		{
-			input.setKeyPress(GameInput::UP);
-		}
-		else
-		if (action == GLFW_RELEASE)
-		{
-			input.setKeyRelease(GameInput::UP);
-		}
+		setKey(GameInput::UP);
 	}
 
 	if (key == GLFW_KEY_C)
 	{
-		if (action == GLFW_PRESS)
-		{
-			input.setKeyPress(GameInput::C);
-		}
-		else
-		if (action == GLFW_RELEASE)
-		{
-			input.setKeyRelease(GameInput::C);
-		}
+		setKey(GameInput::C);
 	}
+
+	if (key == GLFW_KEY_P)
+	{
+		setKey(GameInput::P);
+	}
+
 
 
 };

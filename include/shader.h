@@ -45,6 +45,7 @@ public:
 	void setTexture(int index);
 	void setPosition(int x, int y, int z);
 	void setTextureAtlasCoords(int x, int y);
+	void setAo(bool ao);
 
 private:
 
@@ -54,5 +55,6 @@ private:
 	GLint u_texture;
 	GLint u_pos;
 	GLint u_atlas;
+	GLint u_ao;
 
 };

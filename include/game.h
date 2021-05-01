@@ -23,7 +23,6 @@ public:
 		bool isReleased() { return released; }
 
 
-
 	private:
 
 		friend GameInput;
@@ -63,6 +62,7 @@ public:
 		DOWN,
 		UP,
 		C,
+		P,
 		BUTTONS_COUNT
 	};
 

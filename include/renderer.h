@@ -43,6 +43,8 @@ public:
 
 	void render(Camera &c, ChunkManager &chunkManager, SkyBox &skyBox);
 
+	bool &getAo() { return ao; }
+
 private:
 
 	void init();
@@ -69,4 +71,5 @@ private:
 
 	glm::ivec3 lastPosition = {};
 
+	bool ao = true;
 };

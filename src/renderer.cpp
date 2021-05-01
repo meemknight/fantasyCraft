@@ -264,6 +264,8 @@ void ChunksRenderer::render(Camera &c, ChunkManager &chunkManager, SkyBox &skyBo
 	shader.setPlayerPos({ playerPos.x, playerPos.y, playerPos.z });
 
 	shader.setModelViewMatrix(c.getViewMatrix());
+	
+	shader.setAo(this->ao);
 
 	for (int face = 0; face < 6; face++)
 	{

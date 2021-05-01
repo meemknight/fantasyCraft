@@ -75,6 +75,10 @@ void Game::onUpdate(float deltaTime, const GameInput &input)
 			isCreativeCamera = !isCreativeCamera;
 		}
 
+		if (input.getKey(GameInput::P).isReleased())
+		{
+			renderer.getAo() = !renderer.getAo();
+		}
 
 		const float speed = 16 * deltaTime;
 		glm::vec3 movePos = {};
