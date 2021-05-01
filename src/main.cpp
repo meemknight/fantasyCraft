@@ -7,6 +7,7 @@
 #include <ctime>
 #include "tools.h"
 #include "game.h"
+#include "log.h"
 
 #ifdef PLATFORM_WIN32
 #include <Windows.h>
@@ -207,6 +208,7 @@ int main()
 	{
 		Game game(500, 500);
 
+	
 		long lastTime = clock();
 
 		while (!glfwWindowShouldClose(wind))
@@ -237,7 +239,7 @@ int main()
 	}
 	catch (std::string msg)
 	{
-		std::cout << msg;
+		llog(ErrorLog(), msg);
 		std::cin.clear();
 		std::cin.get();
 	}
