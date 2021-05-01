@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <string>
 #include <glm/mat4x4.hpp>
+#include <type_traits>
 
 class Shader
 {

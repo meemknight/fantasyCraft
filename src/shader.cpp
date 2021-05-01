@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include "tools.h"
+#include "log.h"
 
 void Shader::loadFromFiles(std::string vertexPath, std::string fragmentPath)
 {
@@ -35,7 +36,7 @@ void Shader::loadFromFiles(std::string vertexPath, std::string fragmentPath)
 
 		glGetProgramInfoLog(id, l, &l, message);
 
-		std::cout << message << "\n" << "in: " << vertexPath << " and: " << fragmentPath << "\n";
+		llog(ErrorLog(), message, "\n", "in:", vertexPath, "and:", fragmentPath);
 
 		delete[] message;
 	}
@@ -71,7 +72,7 @@ GLuint Shader::createShaderFromMemory(const char *data, GLenum type)
 
 			message[l - 1] = 0;
 
-			std::cout << message << "\n" << "data:\n\n" << data << "\n\n";
+			llog(ErrorLog(), message, "\n", "data:\n\n", data);
 
 			delete[] message;
 
@@ -88,7 +89,7 @@ std::string Shader::loadShaderSource(std::string source)
 
 	if (!f.is_open())
 	{
-		throw(std::string("err loading ") + source + "\n");
+		throw(std::string("err loading ") + source);
 	}
 
 	//most vexing parse here yay love cpp
@@ -113,7 +114,7 @@ void DrawBlocksShader::load()
 
 	if (u_projectionMatrix == -1)
 	{
-		std::cout << "projMat error\n";
+		llog(ErrorLog(), "projMat error\n");
 	}
 
 }
