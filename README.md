@@ -15,3 +15,12 @@ features:
 - [ ] lights.
 - [ ] fxaa.
 - [x] transparent blocks.
+
+ * transparent blocks
+![ice](https://github.com/meemknight/photos/blob/master/ice.png)
+
+ * with ambient occlusion
+![ao](https://github.com/meemknight/photos/blob/master/with.png)
+
+ * without ambient occlusion
+![ao](https://github.com/meemknight/photos/blob/master/without.png)
