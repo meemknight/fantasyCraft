@@ -185,7 +185,6 @@ void ChunksRenderer::render(Camera &c, Block b, glm::ivec3 pos)
 
 	}
 
-
 	glBindVertexArray(0);
 
 }
