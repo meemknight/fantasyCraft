@@ -7,6 +7,7 @@
 #include "glm/vec2.hpp"
 #include <texture.h>
 #include "renderer.h"
+#include "skyBox.h"
 
 
 class GameInput
@@ -20,7 +21,6 @@ public:
 		bool isPressed() { return pressed; };
 		bool isHeld() { return held; }
 		bool isReleased() { return released; }
-
 
 
 	private:
@@ -61,6 +61,8 @@ public:
 		RIGHT_CLICK,
 		DOWN,
 		UP,
+		C,
+		P,
 		BUTTONS_COUNT
 	};
 
@@ -165,7 +167,8 @@ private:
 	gl2d::Font font;
 	int screenW, screenH;
 
-	FirstPersonFlyCamera camera;
+	Camera *camera = 0;
+	bool isCreativeCamera = 0;
 
 	ChunksRenderer renderer;
 
@@ -173,5 +176,6 @@ private:
 
 	gl2d::Texture arrowTexture;
 
+	SkyBox skyBox;
 
 };

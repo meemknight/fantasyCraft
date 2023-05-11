@@ -50,6 +50,7 @@ protected:
 	void removeReferenceToNeighbours(); //todo rename mabe
 
 	std::vector<glm::ivec3> positions[6];
+	std::vector<uint8_t> ao[6];
 	std::vector<glm::ivec2> UVs[6];
 
 	std::vector<glm::ivec3> transparentPositions[6];

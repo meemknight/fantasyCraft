@@ -29,7 +29,7 @@ public:
 		return p;
 	}
 
-	glm::vec3 &getViewDirection(){return viewDirection;}
+	glm::vec3 getViewDirection();
 
 	//full view transform matrix
 	glm::mat4 getProjectionViewMatrix(); 
@@ -48,14 +48,15 @@ public:
 		aspectRatio = w / h;
 	}
 
-	virtual void move(glm::vec3 direction) { position += direction; }
+	virtual void move(glm::vec3 direction) = 0;
 
 
 protected:
 
 	glm::vec3 position = {};
 	glm::vec3 upVector = { 0,1,0 };
-	glm::vec3 viewDirection = { 0,0,-1 };
+
+	glm::vec2 viewAngle = {};
 
 	float fovRadians = glm::radians(100.f);
 	float closePlane = 0.1f;
@@ -64,12 +65,30 @@ protected:
 
 };
 
-class FirstPersonFlyCamera: public Camera
+
+//just moves in the direction without taking into acount it's orientation
+class KinematicCamera : public Camera
 {
 public:
 
-	void move(glm::vec3 direction);
+	virtual void move(glm::vec3 direction) override { position += direction; };
 
 
+};
+
+//moves in the direction of the orientation but stays at the same height
+class CreativeModeCamera: public Camera
+{
+public:
+
+	virtual void move(glm::vec3 direction) override;
+};
+
+//just moves in the direction of the orientation
+class FlyCamera: public Camera
+{
+public:
+
+	virtual void move(glm::vec3 direction) override;
 
 };

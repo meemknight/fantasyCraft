@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include "tools.h"
+#include "log.h"
 
 void Shader::loadFromFiles(std::string vertexPath, std::string fragmentPath)
 {
@@ -35,7 +36,7 @@ void Shader::loadFromFiles(std::string vertexPath, std::string fragmentPath)
 
 		glGetProgramInfoLog(id, l, &l, message);
 
-		std::cout << message << "\n" << "in: " << vertexPath << " and: " << fragmentPath << "\n";
+		llog(ErrorLog(), message, "\n", "in:", vertexPath, "and:", fragmentPath);
 
 		delete[] message;
 	}
@@ -71,7 +72,7 @@ GLuint Shader::createShaderFromMemory(const char *data, GLenum type)
 
 			message[l - 1] = 0;
 
-			std::cout << message << "\n" << "data:\n\n" << data << "\n\n";
+			llog(ErrorLog(), message, "\n", "data:\n\n", data);
 
 			delete[] message;
 
@@ -88,7 +89,7 @@ std::string Shader::loadShaderSource(std::string source)
 
 	if (!f.is_open())
 	{
-		std::cout << "err loading " << source << "\n";
+		throw(std::string("err loading ") + source);
 	}
 
 	//most vexing parse here yay love cpp
@@ -109,11 +110,12 @@ void DrawBlocksShader::load()
 	u_texture = glGetUniformLocation(id, "u_texture");
 	u_pos = glGetUniformLocation(id, "u_pos");
 	u_atlas = glGetUniformLocation(id, "u_atlas");
+	u_ao = glGetUniformLocation(id, "u_ao");
 
 
 	if (u_projectionMatrix == -1)
 	{
-		std::cout << "projMat error\n";
+		llog(ErrorLog(), "projMat error\n");
 	}
 
 }
@@ -148,4 +150,10 @@ void DrawBlocksShader::setPosition(int x, int y, int z)
 void DrawBlocksShader::setTextureAtlasCoords(int x, int y)
 {
 	glUniform2i(u_atlas, x, y);
+}
+
+
+void DrawBlocksShader::setAo(bool ao)
+{
+	glUniform1i(u_ao, ao);
 }

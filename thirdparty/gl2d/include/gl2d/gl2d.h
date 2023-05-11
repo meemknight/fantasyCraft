@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////
-//opengl2Dlib.h				1.1
+//opengl2Dlib.h				1.2
 //Copyright(c) 2020 Luta Vlad
 //https://github.com/meemknight/gl2d
 //
@@ -30,12 +30,14 @@
 #pragma once
 
 //enable simd functions
-//set it to 0 if it doesn't work on your platform
-#ifdef PLATFORM_WIN32
+//set GL2D_SIMD to 0 if it doesn't work on your platform
+#ifdef _WIN32
 #define GL2D_SIMD 1
 #else
 #define GL2D_SIMD 0
 #endif
+
+
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -43,12 +45,10 @@
 #include <stb_image/stb_image.h>
 #include <stb_truetype/stb_truetype.h>
 
-#ifdef _MSC_VER
-#pragma warning( disable : 4244 4305 4267 4996)
-#endif
-
 namespace gl2d
 {
+
+	//todo proper cmake, rename repo
 
 	void init();
 

@@ -3,6 +3,7 @@
 #include <camera.h>
 #include "texture.h"
 #include "block.h"
+#include "skyBox.h"
 
 enum faces
 {
@@ -32,12 +33,17 @@ public:
 
 	~ChunksRenderer()
 	{
-		//todo
 	}
 
-	void render(Camera c, Block b, glm::ivec3 pos);
-	void render(Camera c, Chunk &chunk);
-	void render(Camera c, ChunkManager &chunkManager);
+	//deprecated
+	void render(Camera &c, Block b, glm::ivec3 pos);
+	
+	//deprecated
+	void render(Camera &c, Chunk &chunk);
+
+	void render(Camera &c, ChunkManager &chunkManager, SkyBox &skyBox);
+
+	bool &getAo() { return ao; }
 
 private:
 
@@ -55,11 +61,15 @@ private:
 
 	GLuint positionsbuffer[6];
 	GLuint textureUVbuffer[6];
+	GLuint aoBuffer[6];
+	GLuint faceMask;
 
 
 	std::vector<glm::ivec3> facesVector;
 	std::vector<glm::vec2> uvVector;
+	std::vector<uint8_t> aoVector;
 
 	glm::ivec3 lastPosition = {};
 
+	bool ao = true;
 };

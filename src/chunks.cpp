@@ -8,16 +8,19 @@ void Chunk::calculateFaces()
 {
 	for (int i = 0; i<6; i++)
 	{
+		positions[i].reserve(200);
 		positions[i].clear();
+
+		UVs[i].reserve(200);
 		UVs[i].clear();
 
-		positions[i].reserve(200);
-		UVs[i].reserve(200);
-		
-		transparentPositions[i].clear();
-		transparentUVs[i].clear();
+		ao[i].clear();
+		ao[i].reserve(200);
 
+		transparentPositions[i].clear();
 		transparentPositions[i].reserve(200);
+
+		transparentUVs[i].clear();
 		transparentUVs[i].reserve(200);
 
 	}
@@ -26,6 +29,7 @@ void Chunk::calculateFaces()
 		for (int z = 0; z < CHUNK_SIZE; z++)
 			for (int y = 0; y < CHUNK_HEIGHT; y++)
 			{
+				int front = 0, back = 0, top = 0, bottom = 0, left = 0, right = 0;
 
 				auto &b = *getBlock(x, y, z);
 
@@ -56,7 +60,7 @@ void Chunk::calculateFaces()
 								positions[FRONT].emplace_back(x, y, z);
 								UVs[FRONT].push_back(b.getPositionInAtlas(FRONT));
 							}
-
+							front = true;
 						}
 					}
 					
@@ -75,6 +79,7 @@ void Chunk::calculateFaces()
 						positions[FRONT].emplace_back(x, y, z);
 						UVs[FRONT].push_back(b.getPositionInAtlas(FRONT));
 					}
+					front = true;
 
 				}
 
@@ -97,7 +102,7 @@ void Chunk::calculateFaces()
 								positions[BACK].emplace_back(x, y, z);
 								UVs[BACK].push_back(b.getPositionInAtlas(BACK));
 							}
-
+							back = true;
 							
 						}
 					}
@@ -116,8 +121,10 @@ void Chunk::calculateFaces()
 					{
 						positions[BACK].emplace_back(x, y, z);
 						UVs[BACK].push_back(b.getPositionInAtlas(BACK));
+						back = true;
+
 					}
-					
+
 				}
 
 				//top
@@ -134,8 +141,9 @@ void Chunk::calculateFaces()
 					{
 						positions[TOP].emplace_back(x, y, z);
 						UVs[TOP].push_back(b.getPositionInAtlas(TOP));
-					}
+						top = true;
 
+					}
 					
 				}
 
@@ -154,7 +162,7 @@ void Chunk::calculateFaces()
 						positions[BOTTOM].emplace_back(x, y, z);
 						UVs[BOTTOM].push_back(b.getPositionInAtlas(BOTTOM));
 					}
-					
+					bottom = true;
 				}
 
 				//left
@@ -176,7 +184,7 @@ void Chunk::calculateFaces()
 								positions[LEFT].emplace_back(x, y, z);
 								UVs[LEFT].push_back(b.getPositionInAtlas(LEFT));
 							}
-
+							left = true;
 						}
 					}
 
@@ -197,7 +205,7 @@ void Chunk::calculateFaces()
 						positions[LEFT].emplace_back(x, y, z);
 						UVs[LEFT].push_back(b.getPositionInAtlas(LEFT));
 					}
-
+					left = true;
 				}
 
 				//right
@@ -221,7 +229,7 @@ void Chunk::calculateFaces()
 								positions[RIGHT].emplace_back(x, y, z);
 								UVs[RIGHT].push_back(b.getPositionInAtlas(RIGHT));
 							}
-
+							right = true;
 						}
 					}
 
@@ -240,8 +248,450 @@ void Chunk::calculateFaces()
 						positions[RIGHT].emplace_back(x, y, z);
 						UVs[RIGHT].push_back(b.getPositionInAtlas(RIGHT));
 					}
-					
+					right = true;
+
 				}
+
+
+				auto getNeighbourBlocks = [x, z, this](
+					int y,
+					int &frontleft,
+					int &frontright,
+					int &left,
+					int &right,
+					int &backleft,
+					int &backright,
+					int &back,
+					int &front
+					) 
+				{
+					if (z <= 0)
+					{
+						if (chunkInBack)
+						{
+							back = chunkInBack->getBlock(x, y, CHUNK_SIZE - 1)->isOpaque();
+						}
+					}
+					else
+					{
+						back = getBlock(x, y, z - 1)->isOpaque();
+					}
+
+					if (z <= 0 && x <= 0)
+					{
+						if (chunkInBack && chunkInBack->chunkAtLeft)
+						{
+							backleft = chunkInBack->chunkAtLeft->getBlock(CHUNK_SIZE - 1, y, CHUNK_SIZE - 1)->isOpaque();
+						}
+					}
+					else if (z <= 0)
+					{
+						if (chunkInBack)
+						{
+							backleft = chunkInBack->getBlock(x - 1, y, CHUNK_SIZE - 1)->isOpaque();
+						}
+					}
+					else if (x <= 0)
+					{
+						if (chunkAtLeft)
+						{
+							backleft = chunkAtLeft->getBlock(CHUNK_SIZE - 1, y, z - 1)->isOpaque();
+						}
+					}
+					else
+					{
+						backleft = getBlock(x - 1, y, z - 1)->isOpaque();
+					}
+
+					if (z <= 0 && x >= CHUNK_SIZE - 1)
+					{
+						if (chunkInBack && chunkInBack->chunkAtRight)
+						{
+							backright = chunkInBack->chunkAtRight->getBlock(0, y, CHUNK_SIZE - 1)->isOpaque();
+						}
+					}
+					else if (z <= 0)
+					{
+						if (chunkInBack)
+						{
+							backright = chunkInBack->getBlock(x + 1, y, CHUNK_SIZE - 1)->isOpaque();
+						}
+					}
+					else if (x >= CHUNK_SIZE - 1)
+					{
+						if (chunkAtRight)
+						{
+							backright = chunkAtRight->getBlock(0, y, z - 1)->isOpaque();
+						}
+					}
+					else
+					{
+						backright = getBlock(x + 1, y, z - 1)->isOpaque();
+					}
+
+					if (z >= CHUNK_SIZE - 1)
+					{
+						if (chunkInFront)
+						{
+							front = chunkInFront->getBlock(x, y, 0)->isOpaque();
+						}
+					}
+					else
+					{
+						front = getBlock(x, y, z + 1)->isOpaque();
+					}
+
+					if (z >= CHUNK_SIZE - 1 && x <= 0)
+					{
+						if (chunkInFront && chunkInFront->chunkAtLeft)
+						{
+							frontleft = chunkInFront->chunkAtLeft->getBlock(CHUNK_SIZE - 1, y, 0)->isOpaque();
+						}
+					}
+					else if (z >= CHUNK_SIZE - 1)
+					{
+						if (chunkInFront)
+						{
+							frontleft = chunkInFront->getBlock(x - 1, y, 0)->isOpaque();
+						}
+
+					}
+					else if (x <= 0)
+					{
+						if (chunkAtLeft)
+						{
+							frontleft = chunkAtLeft->getBlock(CHUNK_SIZE - 1, y, z + 1)->isOpaque();
+						}
+					}
+					else
+					{
+						frontleft = getBlock(x - 1, y, z + 1)->isOpaque();
+					}
+
+					if (z >= CHUNK_SIZE - 1 && x >= CHUNK_SIZE - 1)
+					{
+						if (chunkInFront && chunkInFront->chunkAtRight)
+						{
+							frontright = chunkInFront->chunkAtRight->getBlock(0, y, 0)->isOpaque();
+						}
+					}
+					else if (z >= CHUNK_SIZE - 1)
+					{
+						if (chunkInFront)
+						{
+							frontright = chunkInFront->getBlock(x + 1, y, 0)->isOpaque();
+						}
+					}
+					else if (x >= CHUNK_SIZE - 1)
+					{
+						if (chunkAtRight)
+						{
+							frontright = chunkAtRight->getBlock(0, y, z + 1)->isOpaque();
+						}
+
+					}
+					else
+					{
+						frontright = getBlock(x + 1, y, z + 1)->isOpaque();
+
+					}
+
+					if (x <= 0)
+					{
+						if (chunkAtLeft)
+						{
+							left = chunkAtLeft->getBlock(CHUNK_SIZE - 1, y, z)->isOpaque();
+						}
+					}
+					else
+					{
+						left = getBlock(x - 1, y, z)->isOpaque();
+					}
+
+					if (x >= CHUNK_SIZE - 1)
+					{
+						if (chunkAtRight)
+						{
+							right = chunkAtRight->getBlock(0, y, z)->isOpaque();
+						}
+					}
+					else
+					{ 
+						right = getBlock(x + 1, y, z)->isOpaque();
+					}
+				};
+
+				int TopFrontleft = 0;
+				int TopFrontright = 0;
+				int TopLeft = 0;
+				int TopRight = 0;
+				int TopBackleft = 0;
+				int TopBackright = 0;
+				int TopBack = 0;
+				int TopFront = 0;
+
+				int MiddleFrontleft = 0;
+				int MiddleFrontright = 0;
+				int MiddleLeft = 0;
+				int MiddleRight = 0;
+				int MiddleBackleft = 0;
+				int MiddleBackright = 0;
+				int MiddleBack = 0;
+				int MiddleFront = 0;
+
+				int BottomFrontleft = 0;
+				int BottomFrontright = 0;
+				int BottomLeft = 0;
+				int BottomRight = 0;
+				int BottomBackleft = 0;
+				int BottomBackright = 0;
+				int BottomBack = 0;
+				int BottomFront = 0;
+
+				if (y < CHUNK_HEIGHT - 1)
+				{
+					getNeighbourBlocks(y + 1, TopFrontleft, TopFrontright, TopLeft, TopRight, TopBackleft, TopBackright, TopBack, TopFront);
+				}
+				
+				getNeighbourBlocks(y, MiddleFrontleft, MiddleFrontright, MiddleLeft, MiddleRight, MiddleBackleft, MiddleBackright, MiddleBack, MiddleFront);
+
+				if (y > 0)
+				{
+					getNeighbourBlocks(y - 1, BottomFrontleft, BottomFrontright, BottomLeft, BottomRight, BottomBackleft, BottomBackright, BottomBack, BottomFront);
+				}
+
+
+				if (top)
+				{
+					uint8_t val = 0;
+
+					if(TopBack || TopLeft ||TopBackleft)
+					{
+						//shadow
+					}else
+					{
+						val |= 0b0000'0001;
+					}
+					
+					if(TopFront || TopLeft || TopFrontleft)
+					{
+					}else
+					{
+						val |= 0b0000'0010;
+					}
+					
+					if (TopFront || TopRight || TopFrontright)
+					{
+					}else
+					{
+						val |= 0b0000'0100;
+					}
+					
+					if(TopBack || TopRight || TopBackright)
+					{
+					}else
+					{
+						val |= 0b0000'1000;
+					}
+
+					ao[TOP].push_back(val);
+				}
+
+				if(bottom)
+				{
+					uint8_t val = 0;
+
+					if (BottomBack || BottomLeft || BottomBackleft)
+					{
+						//shadow
+					}
+					else
+					{
+						val |= 0b0000'0100;
+					}
+
+					if (BottomFront || BottomLeft || BottomFrontleft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0010;
+					}
+
+					if (BottomFront || BottomRight || BottomFrontright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0001;
+					}
+
+					if (BottomBack || BottomRight || BottomBackright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'1000;
+					}
+
+					ao[BOTTOM].push_back(val);
+				}
+
+				if (left)
+				{
+					uint8_t val = 0;
+
+					if (BottomFrontleft || MiddleFrontleft || BottomLeft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0001;
+					}
+
+					if (TopFrontleft || MiddleFrontleft || TopLeft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0010;
+					}
+
+					if (TopBackleft || MiddleBackleft || TopLeft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0100;
+					}
+
+					if (BottomBackleft || MiddleBackleft || BottomLeft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'1000;
+					}
+
+					ao[LEFT].push_back(val);
+				}
+
+				if (right)
+				{
+					uint8_t val = 0;
+
+					if ( TopRight || MiddleBackright || TopBackright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0001;
+					}
+
+					if (TopRight || MiddleFrontright || TopFrontright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0010;
+					}
+
+					if (BottomRight || MiddleFrontright || BottomFrontright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0100;
+					}
+
+					if (BottomRight || MiddleBackright || BottomBackright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'1000;
+					}
+
+					ao[RIGHT].push_back(val);
+				}
+
+				if (front)
+				{
+					uint8_t val = 0;
+
+					if(TopFront || MiddleFrontright || TopFrontright)
+					{
+					}else
+					{
+						val |= 0b0000'0001;
+					}
+					
+					if (TopFront || MiddleFrontleft || TopFrontleft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0010;
+					}
+
+					if (BottomFront || MiddleFrontleft || BottomFrontleft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0100;
+					}
+
+					if (BottomFront || MiddleFrontright || BottomFrontright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'1000;
+					}
+
+					ao[FRONT].push_back(val);
+				}
+
+				if (back)
+				{
+					uint8_t val = 0;
+
+					if(BottomBack || MiddleBackleft || BottomBackleft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0001;
+					}
+
+					if (TopBack || MiddleBackleft || TopBackleft)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0010;
+					}
+
+					if (TopBack || MiddleBackright || TopBackright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'0100;
+					}
+
+					if (BottomBack || MiddleBackright|| BottomBackright)
+					{
+					}
+					else
+					{
+						val |= 0b0000'1000;
+					}
+
+					ao[BACK].push_back(val);
+				}
+
 			}
 
 }
@@ -385,7 +835,7 @@ void ChunkManager::setGridSize(int size, glm::ivec2 playerPos)
 
 			loadedChunks.push_back(c);
 
-			newCreatedChunks.insert(loadedChunks.size()-1);
+			newCreatedChunks.insert(int(loadedChunks.size()-1));
 		}
 
 	}
@@ -526,7 +976,7 @@ void ChunkManager::generateChunk(Chunk &c)
 	{
 		for (int j = 0; j < 16; j++)
 		{
-			int height = 50 + getNoiseVal(i, 0, j) * 30;
+			int height = int(50 + getNoiseVal(i, 0, j) * 30);
 
 			for (int h = 0; h < CHUNK_HEIGHT; h++)
 			{
@@ -616,24 +1066,24 @@ glm::ivec2 ChunkManager::getPlayerInChunk(glm::vec2 playerPos)
 
 	glm::ivec2 playerInChunk;
 	
-	constexpr float MARGIN = 0.001;
+	constexpr float MARGIN = 0.001f;
 
 	if (playerPos.x < 0)
 	{
-		playerInChunk.x = (playerPos.x+ MARGIN) / 16;
+		playerInChunk.x = int((playerPos.x+ MARGIN) / 16);
 		playerInChunk.x--;
 	}else
 	{
-		playerInChunk.x = playerPos.x / 16;
+		playerInChunk.x = int(playerPos.x / 16);
 	}
 	
 	if (playerPos.y < 0)
 	{
-		playerInChunk.y = (playerPos.y + MARGIN) / 16;
+		playerInChunk.y = int((playerPos.y + MARGIN) / 16);
 		playerInChunk.y--;
 	}else
 	{
-		playerInChunk.y = playerPos.y / 16;
+		playerInChunk.y = int(playerPos.y / 16);
 	}
 	
 	return playerInChunk;
@@ -649,9 +1099,9 @@ bool ChunkManager::rayCast(glm::ivec3 &pos, glm::ivec3 &lastPos, glm::vec3 start
 	glm::vec3 p = start;
 
 	direction = glm::normalize(direction);
-	direction *= 0.1;
+	direction *= 0.1f;
 
-	for (float moveSoFar = 0; moveSoFar <= maxRaySize; moveSoFar += 0.1)
+	for (float moveSoFar = 0; moveSoFar <= maxRaySize; moveSoFar += 0.1f)
 	{
 		if (p.y < 0) { return 0; }
 		if (p.y >= CHUNK_HEIGHT) { return 0; }
@@ -803,7 +1253,7 @@ void ChunkManager::setNeighbours(std::set<int> &newCreatedChunks, std::set<int> 
 			{
 				loadedChunks[id]->chunkInFront = *itFront;
 
-				auto ind = itFront - loadedChunks.begin();
+				int ind = int(itFront - loadedChunks.begin());
 				chunksToRecalculate.insert(ind);
 			}
 
@@ -818,7 +1268,7 @@ void ChunkManager::setNeighbours(std::set<int> &newCreatedChunks, std::set<int> 
 			{
 				loadedChunks[id]->chunkInBack = *itBack;
 
-				auto ind = itBack - loadedChunks.begin();
+				int ind = int(itBack - loadedChunks.begin());
 				chunksToRecalculate.insert(ind);
 			}
 		
@@ -835,7 +1285,7 @@ void ChunkManager::setNeighbours(std::set<int> &newCreatedChunks, std::set<int> 
 				loadedChunks[id]->chunkAtLeft = *itLeft;
 
 
-				auto ind = itLeft - loadedChunks.begin();
+				int ind = int(itLeft - loadedChunks.begin());
 				chunksToRecalculate.insert(ind);
 			}
 		}
@@ -849,7 +1299,7 @@ void ChunkManager::setNeighbours(std::set<int> &newCreatedChunks, std::set<int> 
 			{
 				loadedChunks[id]->chunkAtRight = *itRight;
 		
-				auto ind = itRight - loadedChunks.begin();
+				int ind = int(itRight - loadedChunks.begin());
 				chunksToRecalculate.insert(ind);
 			}
 
