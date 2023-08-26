@@ -343,7 +343,8 @@ int main()
 			//Letter gradient[] = {{' '}, { '.' }, {':'}, {'-'}, {'='}, {'+'}, {'*'}, { '#' }};
 			
 			Letter gradient[] = {{' '}, { 0x80,0x28 }, {0x88,0x28},
-				{0x98,0x28}, {0x29,0x28}, {0xf1,0x28}, {0xfe,0x28}, { 0xff,0x28 }, {27, 43}};
+				{0x98,0x28}, {0x29,0x28}, {0xf1,0x28}, {145, 37}, {146, 37},
+				{147, 37}, {136, 37}};
 
 			glm::vec2 blockSizePixeld = glm::vec2(immageSize) / glm::vec2(getNotepadBufferSize());
 			glm::vec2 blockSizeUV = glm::vec2(1, 1) / glm::vec2(getNotepadBufferSize());
