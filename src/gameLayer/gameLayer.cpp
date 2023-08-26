@@ -145,22 +145,22 @@ bool gameLogic(float deltaTime, gl2d::FrameBuffer fbo)
 		glm::vec3 movePos = {};
 
 
-		if (platform::isKeyHeld(platform::Button::Left))
+		if (platform::isKeyHeld(platform::Button::A))
 		{
 			movePos.x -= speed;
 		}
 
-		if (platform::isKeyHeld(platform::Button::Right))
+		if (platform::isKeyHeld(platform::Button::D))
 		{
 			movePos.x += speed;
 		}
 
-		if (platform::isKeyHeld(platform::Button::Up))
+		if (platform::isKeyHeld(platform::Button::W))
 		{
 			movePos.z -= speed;
 		}
 
-		if (platform::isKeyHeld(platform::Button::Down))
+		if (platform::isKeyHeld(platform::Button::S))
 		{
 			movePos.z += speed;
 		}
@@ -179,11 +179,21 @@ bool gameLogic(float deltaTime, gl2d::FrameBuffer fbo)
 		static int lastMouseX;
 		static int lastMouseY;
 
-		glm::vec2 delta = platform::getRelMousePosition();
-		delta -= glm::vec2(lastMouseX, lastMouseY);
-		camera->rotateCamera(delta * deltaTime);
-		lastMouseX = platform::getRelMousePosition().x;
-		lastMouseY = platform::getRelMousePosition().y;
+		static bool escaped = 0;
+
+		if (platform::isKeyPressedOn(platform::Button::Escape))
+		{
+			escaped = !escaped;
+		}
+
+		if (!escaped)
+		{
+			glm::vec2 delta = platform::getRelMousePosition();
+			delta -= glm::vec2(lastMouseX, lastMouseY);
+			camera->rotateCamera(delta * deltaTime);
+			lastMouseX = platform::getRelMousePosition().x;
+			lastMouseY = platform::getRelMousePosition().y;
+		}
 
 		//platform::setRelMousePosition(platform::getFrameBufferSizeX() / 2, platform::getFrameBufferSizeY() / 2);
 
