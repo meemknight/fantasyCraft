@@ -17,7 +17,7 @@ void main()
 	float ambiendPart = 0.6;
 	if(u_ao == 0){ambiendPart = 0;}
 
-	float light = (v_ao * v_ao * ambiendPart) + (1.0 - ambiendPart);
+	float light = ( sqrt(v_ao) * ambiendPart) + (1.0 - ambiendPart);
 
 	color.rgb *= light;
 

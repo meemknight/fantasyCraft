@@ -87,8 +87,11 @@ float superSampleTresshold = 0.5;
 int currentSampleMethod = 0;
 bool applyCurves = 1;
 
-float curvesA = 0.118;
-float curvesB = 0.565;
+//float curvesA = 0.118;
+//float curvesB = 0.565;
+
+float curvesA = 0.075;
+float curvesB = 0.315;
 
 int findX = 0;
 int findY = 0;
@@ -198,7 +201,7 @@ int main()
 
 	while (!glfwWindowShouldClose(wind))
 	{
-		Sleep(2);
+		//Sleep(2);
 		//UpdateMusicStream(m);
 		//PlayMusicStream(m);
 
@@ -339,8 +342,6 @@ int main()
 				char a = ' ';
 				char b = 0;
 			};
-
-			//Letter gradient[] = {{' '}, { '.' }, {':'}, {'-'}, {'='}, {'+'}, {'*'}, { '#' }};
 			
 			Letter gradient[] = {{' '}, { 0x80,0x28 }, {0x88,0x28},
 				{0x98,0x28}, {0x29,0x28}, {0xf1,0x28}, {145, 37}, {146, 37},
