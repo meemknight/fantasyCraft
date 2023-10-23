@@ -33,6 +33,7 @@ ChunksRenderer renderer;
 ChunkManager chunkManager;
 
 gl2d::Texture arrowTexture;
+gl2d::Texture handTexture;
 
 SkyBox skyBox;
 
@@ -58,7 +59,7 @@ bool initGame(gl2d::FrameBuffer fbo)
 	updateWindowMetrics(platform::getFrameBufferSizeX(), platform::getFrameBufferSizeY());
 
 	//create 2D renderer
-	renderer2d.create();
+	renderer2d.create(fbo.fbo);
 
 	font.createFromFile(RESOURCES_PATH "roboto_black.ttf");
 
@@ -71,6 +72,8 @@ bool initGame(gl2d::FrameBuffer fbo)
 	//std::cout << chunkManager.topCorner.x << " " << chunkManager.topCorner.y << "\n";
 
 	arrowTexture.loadFromFile(RESOURCES_PATH  "arrow.png");
+
+	handTexture.loadFromFile(RESOURCES_PATH  "hand.png");
 
 	skyBox.create();
 
@@ -94,27 +97,32 @@ bool initGame(gl2d::FrameBuffer fbo)
 
 bool gameLogic(float deltaTime, gl2d::FrameBuffer fbo)
 {
-#pragma region init stuff
 	int w = 0; int h = 0;
-	w = platform::getFrameBufferSizeX(); //window w
-	h = platform::getFrameBufferSizeY(); //window h
-	
-	glViewport(0, 0, w, h);
-	
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo.fbo);
-	glDisable(GL_DEPTH_TEST);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear screen
+#pragma region initialization
+	{
+		w = platform::getFrameBufferSizeX(); //window w
+		h = platform::getFrameBufferSizeY(); //window h
 
+		glViewport(0, 0, w, h);
 
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo.fbo);
+		glDisable(GL_DEPTH_TEST);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear screen
+	}
 #pragma endregion
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glDisable(GL_MULTISAMPLE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glEnable(GL_MULTISAMPLE);
 
-	//input
+#pragma region enable opengl stuff
+	{
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+		glDisable(GL_MULTISAMPLE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//glEnable(GL_MULTISAMPLE);
+	}
+#pragma endregion
+
+#pragma region input
 	{
 		if (platform::isKeyPressedOn(platform::Button::C))
 		{
@@ -197,13 +205,14 @@ bool gameLogic(float deltaTime, gl2d::FrameBuffer fbo)
 
 		//platform::setRelMousePosition(platform::getFrameBufferSizeX() / 2, platform::getFrameBufferSizeY() / 2);
 
+
+		//std::cout << "pos: " << camera.getPosition().x << " " << camera.getPosition().z << " -- chunk"
+		//	<< chunkManager.getPlayerInChunk({camera.getPosition().x, camera.getPosition().z}).x
+		//	<< " " << chunkManager.getPlayerInChunk({ camera.getPosition().x, camera.getPosition().z }).y << "\n";
 	}
+#pragma endregion
 
-	//std::cout << "pos: " << camera.getPosition().x << " " << camera.getPosition().z << " -- chunk"
-	//	<< chunkManager.getPlayerInChunk({camera.getPosition().x, camera.getPosition().z}).x
-	//	<< " " << chunkManager.getPlayerInChunk({ camera.getPosition().x, camera.getPosition().z }).y << "\n";
-
-
+#pragma region game logic
 	chunkManager.setPlayerPos(glm::vec2{camera->getPosition().x, camera->getPosition().z});
 
 
@@ -230,17 +239,50 @@ bool gameLogic(float deltaTime, gl2d::FrameBuffer fbo)
 		}
 
 	}
+#pragma endregion
+
+#pragma region render
+	{
+		renderer.render(*camera, chunkManager, skyBox);
+
+		//2d ui stuff
 
 
-	renderer.render(*camera, chunkManager, skyBox);
 
-	//2d ui stuff
 
-	renderer2d.renderRectangle({platform::getFrameBufferSizeX() / 2 - 15,
-		platform::getFrameBufferSizeX() / 2 - 15, 30, 30},
-		arrowTexture);
+		//noob
+	renderer2d.renderRectangle(glm::vec4(0, 0, 10, 10), glm::vec4(1, 1, 1, 1),
+		glm::vec2(0, 0), 0);
 
-	renderer2d.flush();
+
+		//game developer
+	renderer2d.renderRectangle({0,0,10,10}, {1,1,1,1}, {}, {});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		renderer2d.renderRectangle({w - 300, h - 250, 250, 250}, handTexture);
+
+		renderer2d.renderRectangle({platform::getFrameBufferSizeX() / 2 - 15,
+			platform::getFrameBufferSizeX() / 2 - 15, 30, 30},
+			arrowTexture);
+
+		renderer2d.flush();
+	}
+#pragma endregion
+
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return true;

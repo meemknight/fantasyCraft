@@ -520,7 +520,7 @@ int main()
 
 				if (getBrailBlock(1, 3))
 				{
-					remappedBrail |= 0b1000'0001;
+					remappedBrail |= 0b1000'0000;
 				}
 
 				writeInBuffer(x, y, remappedBrail, 0x28);
